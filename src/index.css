@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.active {
+    @apply bg-primary transition-all duration-500 text-white
+}
+
+::-webkit-scrollbar {
+    @apply w-[4px]
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-transparent
+}
+
+::-webkit-scrollbar-thumb {
+    @apply opacity-20 bg-primary
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary
+}
+
+* {
+    scroll-behavior: smooth;
+}
