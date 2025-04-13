@@ -1,11 +1,22 @@
 import React from 'react'
 import amico from '../assets/images/amico.png'
+import { useNavigate } from 'react-router-dom';
 
 
-export default function HomeFeaturesCard() {
+export default function HomeServicesCard() {
+
+    const navigate = useNavigate();
+
+    const handleViewAllServices = () => {
+        navigate('/services');
+    };
+
     return <>
         <div className="bg-white rounded-2xl p-5 pb-0 max-h-[35vh] overflow-y-auto">
-            <h2 className='capitalize font-semibold text-xl text-black'>Features</h2>
+            <div className="flex items-center justify-between">
+                <h2 className='capitalize font-semibold text-xl text-black'>Services</h2>
+                <button onClick={handleViewAllServices} className="text-green-500">view all</button>
+            </div>
             <div className="flex flex-col gap-3">
                 <div className="flex gap-2 p-3">
                     <div className="w-1/5"><img src={amico} className='w-4/5' alt="" /></div>

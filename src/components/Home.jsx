@@ -1,8 +1,8 @@
 import React from 'react'
 import amico from '../assets/images/amico.png'
 import HomeUsersTable from './HomeUsersTable'
-import HomeFeaturesCard from './HomeFeaturesCard'
 import HomeProvidersTable from './HomeProvidersTable'
+import HomeServicesCard from './HomeFeaturesCard'
 
 export default function Home() {
 
@@ -35,7 +35,7 @@ export default function Home() {
 
       {/* right side */}
       <div className="w-1/3 flex flex-col gap-5">
-        <HomeFeaturesCard />
+        <HomeServicesCard />
         <HomeProvidersTable />
       </div>
     </div>
