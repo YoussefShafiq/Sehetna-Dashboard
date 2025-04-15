@@ -8,9 +8,9 @@ export default function Home() {
 
 
   return <>
-    <div className="flex gap-5">
+    <div className="flex lg:flex-row flex-col gap-5">
       {/* left side */}
-      <div className="w-2/3 flex flex-col gap-5">
+      <div className="lg:w-2/3 flex flex-col gap-5">
 
         {/* welcome card */}
         <div className="flex items-center gap-5 bg-gradient-to-r from-[#1c536a] to-[#3498c4] p-5 rounded-2xl text-white">
@@ -34,7 +34,7 @@ export default function Home() {
 
 
       {/* right side */}
-      <div className="w-1/3 flex flex-col gap-5">
+      <div className="lg:w-1/3 flex flex-col gap-5">
         <HomeServicesCard />
         <HomeProvidersTable />
       </div>
