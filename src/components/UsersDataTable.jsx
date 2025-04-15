@@ -92,7 +92,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                     value={globalFilterValue}
                     onChange={onGlobalFilterChange}
                     placeholder="Search users..."
-                    className="px-2 py-1 rounded-xl"
+                    className="px-3 py-2 rounded-xl shadow-sm focus:ring-2"
                 />
             </span>
         </div>
@@ -106,7 +106,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                 rows={10}
                 dataKey="id"
                 filters={filters}
-                filterDisplay="row"
+                // filterDisplay="row"
                 loading={loading}
                 globalFilterFields={['first_name', 'last_name', 'email', 'phone', 'status']}
                 header={header}
@@ -119,12 +119,14 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                     className=''
                     body={nameBodyTemplate}
                     filter
+                    filterHeaderClassName='text-sm font-semibold'
                     filterPlaceholder="Search by name"
                 />
                 <Column
                     field="email"
                     header="Email"
                     filter
+                    filterHeaderClassName='text-sm font-semibold'
                     filterPlaceholder="Search by email"
                     style={{ minWidth: '16rem' }}
                 />
@@ -132,6 +134,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                     field="phone"
                     header="Phone"
                     filter
+                    filterHeaderClassName='text-sm font-semibold'
                     filterPlaceholder="Search by phone"
                     style={{ minWidth: '10rem' }}
                 />
@@ -139,6 +142,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                     field="gender"
                     header="Gender"
                     filter
+                    filterHeaderClassName='text-sm font-semibold'
                     filterPlaceholder="Search by gender"
                     style={{ minWidth: '8rem' }}
                 />
@@ -148,6 +152,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                     style={{ minWidth: '12rem' }}
                     body={statusBodyTemplate}
                     filter
+                    filterHeaderClassName='text-sm font-semibold'
                     filterPlaceholder="Search by status"
                 />
                 <Column

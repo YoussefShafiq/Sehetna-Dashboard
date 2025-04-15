@@ -1,19 +1,29 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import logo from '../assets/images/Sehetna 1.png'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { HandHeart, Home, LogOutIcon, SidebarClose, User, User2Icon, Users, Users2, Users2Icon, WorkflowIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SidebarContext } from '../contexts/SidebarContext'
+import axios from 'axios'
 
 export default function Sidebar() {
     const { sidebarOpen, setSidebarOpen } = useContext(SidebarContext)
+    const [loggingOut, setloggingOut] = useState(false)
 
     const navigate = useNavigate()
 
-    const handleLogout = () => {
-        localStorage.removeItem('userToken')
-        navigate('/login')
-        toast.success('logged out successfully', { duration: 2000 })
+    async function handleLogout() {
+        setloggingOut(true)
+        try {
+            let resopnse = await axios.post('https://api.sehtnaa.com/api/auth/logout', {}, { headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` } })
+            localStorage.removeItem('userToken')
+            toast.success('logged out successfully', { duration: 2000 })
+            navigate('/login')
+            setloggingOut(false)
+        } catch (error) {
+            toast.error(error.response.data.message, { duration: 5000 })
+            setloggingOut(false)
+        }
     }
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
@@ -35,7 +45,7 @@ export default function Sidebar() {
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/services" ><HandHeart size={18} /> Services</NavLink>
                     </div>
                 </div>
-                <button onClick={handleLogout} className='bg-red-500 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2'>logout <LogOutIcon /></button>
+                <button onClick={handleLogout} disabled={loggingOut} className='bg-red-500 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2 disabled:cursor-not-allowed disabled:opacity-50'>logout <LogOutIcon /></button>
             </div>
         </div>
     </>

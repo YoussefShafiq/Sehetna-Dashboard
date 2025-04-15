@@ -20,7 +20,7 @@ export default function HomeServicesCard({ services }) {
             {services?.recent?.map((service, index) => (
                 <div key={index} className="flex flex-col gap-3">
                     <div className="flex gap-2 p-3">
-                        <div className="w-1/5"><img src={'https://api.sehtnaa.com/' + service.profile_image} className='w-4/5' alt="" /></div>
+                        <div className="w-1/5"><img src={'https://api.sehtnaa.com/storage/' + service.cover_photo} className='w-4/5' alt="" /></div>
                         <div className="flex flex-col">
                             <h2 className='capitalize font-semibold text-black'>{service.name.en}</h2>
                             <h3 className='text-gray-500 text-xs'>created at 13/06/2023</h3>

@@ -21,7 +21,7 @@ export default function Home() {
 
   const { data: homeData, isLoading: isHomeLoading, isError: isHomeError } = useQuery({
     queryKey: ['homeData'],
-    queryFn: getHomeData
+    queryFn: getHomeData,
   })
 
 
