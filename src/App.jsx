@@ -36,9 +36,9 @@ function App() {
       <QueryClientProvider client={query}>
         <SidebarContextProvider>
           <RouterProvider router={routers} />
+          <Toaster position='bottom-right' />
         </SidebarContextProvider>
       </QueryClientProvider>
-      <Toaster />
     </>
   )
 }

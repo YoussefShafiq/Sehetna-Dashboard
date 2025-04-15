@@ -13,7 +13,7 @@ export default function Sidebar() {
     const handleLogout = () => {
         localStorage.removeItem('userToken')
         navigate('/login')
-        // toast.success('logged out successfully', { duration: 2000 })
+        toast.success('logged out successfully', { duration: 2000 })
     }
 
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen)

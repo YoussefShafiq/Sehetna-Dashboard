@@ -8,7 +8,7 @@ import { useQuery } from 'react-query'
 
 export default function Home() {
 
-  function getHomeDate() {
+  function getHomeData() {
     return axios.get(
       `https://api.sehtnaa.com/api/admin/dashboard`,
       {
@@ -20,13 +20,9 @@ export default function Home() {
   }
 
   const { data: homeData, isLoading: isHomeLoading, isError: isHomeError } = useQuery({
-    queryKey: ['homeDate'],
-    queryFn: getHomeDate
+    queryKey: ['homeData'],
+    queryFn: getHomeData
   })
-
-  useEffect(() => {
-    console.log(homeData?.data?.data);
-  }, [homeData])
 
 
   return <>
