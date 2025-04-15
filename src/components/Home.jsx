@@ -1,10 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import amico from '../assets/images/amico.png'
 import HomeUsersTable from './HomeUsersTable'
 import HomeProvidersTable from './HomeProvidersTable'
 import HomeServicesCard from './HomeFeaturesCard'
+import axios from 'axios'
+import { useQuery } from 'react-query'
 
 export default function Home() {
+
+  function getHomeDate() {
+    return axios.get(
+      `https://api.sehtnaa.com/api/admin/dashboard`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`
+        }
+      }
+    )
+  }
+
+  const { data: homeData, isLoading: isHomeLoading, isError: isHomeError } = useQuery({
+    queryKey: ['homeDate'],
+    queryFn: getHomeDate
+  })
+
+  useEffect(() => {
+    console.log(homeData?.data?.data);
+  }, [homeData])
 
 
   return <>
@@ -28,15 +50,15 @@ export default function Home() {
         </div>
 
         <div className="">
-          <HomeUsersTable />
+          <HomeUsersTable users={homeData?.data?.data?.users} />
         </div>
       </div>
 
 
       {/* right side */}
       <div className="lg:w-1/3 flex flex-col gap-5">
-        <HomeServicesCard />
-        <HomeProvidersTable />
+        <HomeServicesCard services={homeData?.data?.data?.services} />
+        <HomeProvidersTable providers={homeData?.data?.data?.providers} />
       </div>
     </div>
   </>

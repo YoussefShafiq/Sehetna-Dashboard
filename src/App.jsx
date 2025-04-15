@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import GoHome from './components/GoHome';
 import SidebarContextProvider from './contexts/SidebarContext';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function App() {
 
@@ -28,12 +29,16 @@ function App() {
     },
   ]);
 
+  let query = new QueryClient();
+
   return (
     <>
-      <SidebarContextProvider>
-        <RouterProvider router={routers} />
-        <Toaster position='bottom-right' />
-      </SidebarContextProvider>
+      <QueryClientProvider client={query}>
+        <SidebarContextProvider>
+          <RouterProvider router={routers} />
+        </SidebarContextProvider>
+      </QueryClientProvider>
+      <Toaster />
     </>
   )
 }

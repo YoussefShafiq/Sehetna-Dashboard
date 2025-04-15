@@ -1,46 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const HomeProvidersTable = () => {
+const HomeProvidersTable = ({ providers }) => {
     // Simulated data array for providers
-    const providers = [
-        {
-            id: 1,
-            name: 'MedCare Solutions',
-            type: 'ORG',
-            status: 'Active'
-        },
-        {
-            id: 2,
-            name: 'Dr. Ahmed Hassan',
-            type: 'INDV',
-            status: 'Active'
-        },
-        {
-            id: 3,
-            name: 'HealthPlus Network',
-            type: 'ORG',
-            status: 'Inactive'
-        },
-        {
-            id: 4,
-            name: 'Dr. Sara Mohamed',
-            type: 'INDV',
-            status: 'Active'
-        },
-        {
-            id: 5,
-            name: 'City Medical Group',
-            type: 'ORG',
-            status: 'Active'
-        },
-        {
-            id: 6,
-            name: 'Dr. Omar Khaled',
-            type: 'INDV',
-            status: 'Inactive'
-        }
-    ];
+
 
     const navigate = useNavigate();
 
@@ -64,31 +27,31 @@ const HomeProvidersTable = () => {
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Type
                             </th>
-                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {/* <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div className="flex items-center">
                                     Status
                                 </div>
-                            </th>
+                            </th> */}
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {providers.map((provider) => (
+                        {providers?.recent?.map((provider) => (
                             <tr key={provider.id}>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {provider.name}
+                                    {provider.first_name} {provider.last_name}
                                 </td>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div className={`px-2 text-xs leading-5 font-semibold rounded-full text-center
-                                        ${provider.type === 'INDV' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
+                                    <div className={`px-2 text-xs leading-5 font-semibold rounded-full text-center w-fit
+                                        ${provider.type === 'individual' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
                                         {provider.type}
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                {/* <td className="px-6 py-4 whitespace-nowrap">
                                     <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-full
                                         ${provider.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                         {provider.status}
                                     </div>
-                                </td>
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>

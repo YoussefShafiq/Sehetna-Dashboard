@@ -1,64 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const HomeUsersTable = () => {
+const HomeUsersTable = ({ users }) => {
     // Simulated data array
-    const users = [
-        {
-            id: 1,
-            name: 'Youssef Lauendy',
-            gender: 'Male',
-            phone: '(+2) 01063361951',
-            email: 'Youssef@gmail.com',
-            country: 'EL Nozha',
-            status: 'Active'
-        },
-        {
-            id: 2,
-            name: 'Youssef Shafek',
-            gender: 'Male',
-            phone: '(+2) 01145528803',
-            email: 'Shafek@gmail.com',
-            country: 'Qubaa',
-            status: 'Inactive'
-        },
-        {
-            id: 2,
-            name: 'Youssef Shafek',
-            gender: 'Male',
-            phone: '(+2) 01145528803',
-            email: 'Shafek@gmail.com',
-            country: 'Qubaa',
-            status: 'Active'
-        },
-        {
-            id: 3,
-            name: 'Sausan Badr',
-            gender: 'Female',
-            phone: '(+2) 01547239601',
-            email: 'Sausanb@gmail.com',
-            country: '6 October',
-            status: 'Active'
-        },
-        {
-            id: 3,
-            name: 'Sausan Badr',
-            gender: 'Female',
-            phone: '(+2) 01547239601',
-            email: 'Sausanb@gmail.com',
-            country: '6 October',
-            status: 'Inactive'
-        },
-        {
-            id: 3,
-            name: 'Sausan Badr',
-            gender: 'Female',
-            phone: '(+2) 01547239601',
-            email: 'Sausanb@gmail.com',
-            country: '6 October',
-            status: 'Active'
-        }
-    ];
+
 
     const navigate = useNavigate();
 
@@ -96,10 +41,10 @@ const HomeUsersTable = () => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {users.map((user) => (
+                        {users?.recent?.slice(0, 7).map((user) => (
                             <tr key={user.id}>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {user.name}
+                                    {user.first_name} {user.last_name}
                                 </td>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {user.gender}
@@ -110,9 +55,9 @@ const HomeUsersTable = () => {
                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {user.email}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className="px-4 py-4 whitespace-nowrap">
                                     <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-full
-                    ${user.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    ${user.status.toLowerCase() === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                                         {user.status}
                                     </div>
                                 </td>
