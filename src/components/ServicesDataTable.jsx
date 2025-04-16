@@ -605,8 +605,8 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             required
                                         >
                                             <option value="individual">Individual</option>
-                                            <option value="organizational">Organizational</option>
-                                        </select>
+                                            <option value="organizationalal">Organizatialonalal</option>
+  al                                      </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Price (SAR)</label>
@@ -802,7 +802,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
 
                                         >
                                             <option value="individual">Individual</option>
-                                            <option value="organization">Organization</option>
+                                            <option value="organizational">Organizational</option>
                                         </select>
                                     </div>
                                     <div>
