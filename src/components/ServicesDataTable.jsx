@@ -605,7 +605,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             required
                                         >
                                             <option value="individual">Individual</option>
-                                            <option value="organization">Organization</option>
+                                            <option value="organizational">Organizational</option>
                                         </select>
                                     </div>
                                     <div>
