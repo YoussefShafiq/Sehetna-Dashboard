@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import logo from '../assets/images/Sehetna.png'
+import logo from '../assets/images/sehetna.png'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { HandHeart, Home, LogOutIcon, SendToBack, Shield, SidebarClose, User2Icon, Users2Icon } from 'lucide-react'
 import toast from 'react-hot-toast'
