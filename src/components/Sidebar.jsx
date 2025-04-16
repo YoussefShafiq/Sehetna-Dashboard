@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react'
-import logo from '../assets/images/Sehetna 1.png'
+import logo from '../assets/images/Sehetna.png'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { HandHeart, Home, LogOutIcon, SidebarClose, User, User2Icon, Users, Users2, Users2Icon, WorkflowIcon } from 'lucide-react'
+import { HandHeart, Home, LogOutIcon, SendToBack, Shield, SidebarClose, User2Icon, Users2Icon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SidebarContext } from '../contexts/SidebarContext'
 import axios from 'axios'
+import copyrightimg from '../assets/images/© Copy right s7etna 2025.png'
 
 export default function Sidebar() {
     const { sidebarOpen, setSidebarOpen } = useContext(SidebarContext)
@@ -40,14 +41,21 @@ export default function Sidebar() {
                     <div className="flex justify-center items-center overflow-hidden mb-5">
                         <img src={logo} alt="Logo" className="w-4/5" />
                     </div>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 text-gray-400">
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/" ><Home size={18} /> Home</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/users" ><User2Icon size={18} /> Users</NavLink>
-                        <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/providers" ><Users2Icon size={18} /> Provider</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/services" ><HandHeart size={18} /> Services</NavLink>
+                        <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/categories" ><SendToBack size={18} /> Categories</NavLink>
+                        <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/providers" ><Users2Icon size={18} /> Provider</NavLink>
+                        <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/admins" ><Shield size={18} /> Admins</NavLink>
                     </div>
                 </div>
-                <button onClick={handleLogout} disabled={loggingOut} className='bg-red-500 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2 disabled:cursor-not-allowed disabled:opacity-50'>logout <LogOutIcon /></button>
+                <div className="flex flex-col">
+                    <button onClick={handleLogout} disabled={loggingOut} className='bg-gray-400 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2 disabled:cursor-not-allowed disabled:opacity-50'>logout <LogOutIcon /></button>
+                    <div className="">
+                        <img src={copyrightimg} alt="Logo" className="w-full" />
+                    </div>
+                </div>
             </div>
         </div>
     </>

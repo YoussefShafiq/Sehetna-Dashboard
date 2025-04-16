@@ -6,41 +6,33 @@ import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight, ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { useQueryClient } from 'react-query';
 
-export default function ServicesDataTable({ services, loading, refetch }) {
+export default function CategoriesDataTable({ categories, loading, refetch }) {
     const [filters, setFilters] = useState({
         global: '',
         name: '',
-        category: '',
-        price: '',
-        provider_type: '',
+        order: '',
         status: ''
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage] = useState(10);
-    const [togglingServiceId, setTogglingServiceId] = useState(null);
-    const [deletingServiceId, setDeletingServiceId] = useState(null);
+    const [togglingCategoryId, setTogglingCategoryId] = useState(null);
+    const [deletingCategoryId, setDeletingCategoryId] = useState(null);
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [selectedService, setSelectedService] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [serviceToDelete, setServiceToDelete] = useState(null);
-    const queryClient = useQueryClient();
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
 
     // Form state for add/edit
     const [formData, setFormData] = useState({
         name: { en: '', ar: '' },
         description: { en: '', ar: '' },
-        provider_type: 'individual',
-        price: '',
-        category_id: '',
+        order: '',
         is_active: true
     });
     const [iconFile, setIconFile] = useState(null);
-    const [coverFile, setCoverFile] = useState(null);
     const [iconPreview, setIconPreview] = useState('');
-    const [coverPreview, setCoverPreview] = useState('');
 
     const handleFilterChange = (field, value) => {
         setFilters(prev => ({
@@ -50,11 +42,11 @@ export default function ServicesDataTable({ services, loading, refetch }) {
         setCurrentPage(1);
     };
 
-    const handleToggleStatus = async (serviceId, currentStatus) => {
-        setTogglingServiceId(serviceId);
+    const handleToggleStatus = async (categoryId, currentStatus) => {
+        setTogglingCategoryId(categoryId);
         try {
             await axios.post(
-                `https://api.sehtnaa.com/api/services/${serviceId}`,
+                `https://api.sehtnaa.com/api/categories/${categoryId}/toggle-status`,
                 { is_active: !currentStatus },
                 {
                     headers: {
@@ -62,70 +54,60 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                     }
                 }
             );
-            toast.success("Service status updated", { duration: 2000 });
+            toast.success("Category status updated", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "Failed to update status", { duration: 3000 });
         } finally {
-            setTogglingServiceId(null);
+            setTogglingCategoryId(null);
         }
     };
 
-    const handleDeleteClick = (serviceId) => {
-        setServiceToDelete(serviceId);
+    const handleDeleteClick = (categoryId) => {
+        setCategoryToDelete(categoryId);
         setShowDeleteConfirm(true);
     };
 
     const handleConfirmDelete = async () => {
-        if (!serviceToDelete) return;
+        if (!categoryToDelete) return;
 
-        setDeletingServiceId(serviceToDelete);
+        setDeletingCategoryId(categoryToDelete);
         setShowDeleteConfirm(false);
 
         try {
             await axios.delete(
-                `https://api.sehtnaa.com/api/services/${serviceToDelete}`,
+                `https://api.sehtnaa.com/api/categories/${categoryToDelete}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('userToken')}`
                     }
                 }
             );
-            toast.success("Service deleted successfully", { duration: 2000 });
+            toast.success("Category deleted successfully", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error("Failed to delete service", { duration: 3000 });
+            toast.error("Failed to delete category", { duration: 3000 });
         } finally {
-            setDeletingServiceId(null);
-            setServiceToDelete(null);
+            setDeletingCategoryId(null);
+            setCategoryToDelete(null);
         }
     };
 
-    const handleFileChange = (e, type) => {
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
-                if (type === 'icon') {
-                    setIconFile(file);
-                    setIconPreview(reader.result);
-                } else {
-                    setCoverFile(file);
-                    setCoverPreview(reader.result);
-                }
+                setIconFile(file);
+                setIconPreview(reader.result);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleRemoveFile = (type) => {
-        if (type === 'icon') {
-            setIconFile(null);
-            setIconPreview('');
-        } else {
-            setCoverFile(null);
-            setCoverPreview('');
-        }
+    const handleRemoveFile = () => {
+        setIconFile(null);
+        setIconPreview('');
     };
 
     const handleFormChange = (e, lang = null) => {
@@ -150,7 +132,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
         }
     };
 
-    const handleAddService = async (e) => {
+    const handleAddCategory = async (e) => {
         e.preventDefault();
         try {
             const formDataToSend = new FormData();
@@ -160,16 +142,13 @@ export default function ServicesDataTable({ services, loading, refetch }) {
             formDataToSend.append('name[ar]', formData.name.ar);
             formDataToSend.append('description[en]', formData.description.en);
             formDataToSend.append('description[ar]', formData.description.ar);
-            formDataToSend.append('provider_type', formData.provider_type);
-            formDataToSend.append('price', formData.price);
-            formDataToSend.append('category_id', formData.category_id);
+            formDataToSend.append('order', formData.order);
 
-            // Append files if they exist
+            // Append file if it exists
             if (iconFile) formDataToSend.append('icon', iconFile);
-            if (coverFile) formDataToSend.append('cover_photo', coverFile);
 
             await axios.post(
-                'https://api.sehtnaa.com/api/services',
+                'https://api.sehtnaa.com/api/categories',
                 formDataToSend,
                 {
                     headers: {
@@ -179,16 +158,16 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                 }
             );
 
-            toast.success("Service added successfully", { duration: 2000 });
+            toast.success("Category added successfully", { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
-            toast.error("Failed to add service", { duration: 3000 });
+            toast.error("Failed to add category", { duration: 3000 });
         }
     };
 
-    const handleEditService = async (e) => {
+    const handleEditCategory = async (e) => {
         e.preventDefault();
         try {
             const formDataToSend = new FormData();
@@ -198,18 +177,15 @@ export default function ServicesDataTable({ services, loading, refetch }) {
             formDataToSend.append('name[ar]', formData.name.ar);
             formDataToSend.append('description[en]', formData.description.en);
             formDataToSend.append('description[ar]', formData.description.ar);
-            formDataToSend.append('price', formData.price);
-            formDataToSend.append('provider_type', formData.provider_type);
-            formDataToSend.append('category_id', formData.category_id);
+            formDataToSend.append('order', formData.order);
             formDataToSend.append('is_active', formData.is_active ? 1 : 0);
-            formDataToSend.append('_method', 'POST'); // For Laravel to recognize as PUT request
+            formDataToSend.append('_method', 'POST');
 
-            // Append files if they exist
+            // Append file if it exists
             if (iconFile) formDataToSend.append('icon', iconFile);
-            if (coverFile) formDataToSend.append('cover_photo', coverFile);
 
             await axios.post(
-                `https://api.sehtnaa.com/api/services/${selectedService.id}`,
+                `https://api.sehtnaa.com/api/categories/${selectedCategory.id}`,
                 formDataToSend,
                 {
                     headers: {
@@ -219,12 +195,12 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                 }
             );
 
-            toast.success("Service updated successfully", { duration: 2000 });
+            toast.success("Category updated successfully", { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "Failed to update category", { duration: 3000 });
         }
     };
 
@@ -232,59 +208,46 @@ export default function ServicesDataTable({ services, loading, refetch }) {
         setFormData({
             name: { en: '', ar: '' },
             description: { en: '', ar: '' },
-            provider_type: 'individual',
-            price: '',
-            category_id: '',
+            order: '',
             is_active: true
         });
         setIconFile(null);
-        setCoverFile(null);
         setIconPreview('');
-        setCoverPreview('');
     };
 
-    const prepareEditForm = (service) => {
-        setSelectedService(service);
+    const prepareEditForm = (category) => {
+        setSelectedCategory(category);
         setFormData({
-            name: service.name,
-            description: service.description,
-            provider_type: service.provider_type,
-            price: service.price,
-            category_id: service.category_id,
-            is_active: service.is_active
+            name: category.name,
+            description: category.description,
+            order: category.order,
+            is_active: category.is_active
         });
-        // Reset file states
+        // Reset file state
         setIconFile(null);
-        setCoverFile(null);
-        // Set previews from existing images
-        setIconPreview(service.icon ? `https://api.sehtnaa.com/storage/${service.icon}` : '');
-        setCoverPreview(service.cover_photo ? `https://api.sehtnaa.com/storage/${service.cover_photo}` : '');
+        // Set preview from existing image
+        setIconPreview(category.icon ? `https://api.sehtnaa.com/storage/${category.icon}` : '');
         setShowEditModal(true);
     };
 
-    // Filter services based on all filter criteria
-    const filteredServices = services?.filter(service => {
+    // Filter categories based on all filter criteria
+    const filteredCategories = categories?.filter(category => {
         return (
             (filters.global === '' ||
-                service.name.en.toLowerCase().includes(filters.global.toLowerCase()) ||
-                service.name.ar.toLowerCase().includes(filters.global.toLowerCase()) ||
-                service.category.name.en.toLowerCase().includes(filters.global.toLowerCase()) ||
-                service.price.toString().includes(filters.global)) &&
+                category.name.en.toLowerCase().includes(filters.global.toLowerCase()) ||
+                category.name.ar.toLowerCase().includes(filters.global.toLowerCase()) ||
+                category.order.toString().includes(filters.global)) &&
             (filters.name === '' ||
-                service.name.en.toLowerCase().includes(filters.name.toLowerCase()) ||
-                service.name.ar.toLowerCase().includes(filters.name.toLowerCase())) &&
-            (filters.category === '' ||
-                service.category.name.en.toLowerCase().includes(filters.category.toLowerCase()) ||
-                service.category.name.ar.toLowerCase().includes(filters.category.toLowerCase())) &&
-            (filters.price === '' || service.price.toString().includes(filters.price)) &&
-            (filters.provider_type === '' || service.provider_type.toLowerCase().includes(filters.provider_type.toLowerCase())) &&
-            (filters.status === '' || (service.is_active ? 'active' : 'inactive').includes(filters.status.toLowerCase()))
+                category.name.en.toLowerCase().includes(filters.name.toLowerCase()) ||
+                category.name.ar.toLowerCase().includes(filters.name.toLowerCase())) &&
+            (filters.order === '' || category.order.toString().includes(filters.order)) &&
+            (filters.status === '' || (category.is_active ? 'active' : 'inactive').includes(filters.status.toLowerCase()))
         );
     }) || [];
 
     // Pagination logic
-    const totalPages = Math.ceil(filteredServices.length / rowsPerPage);
-    const paginatedServices = filteredServices.slice(
+    const totalPages = Math.ceil(filteredCategories.length / rowsPerPage);
+    const paginatedCategories = filteredCategories.slice(
         (currentPage - 1) * rowsPerPage,
         currentPage * rowsPerPage
     );
@@ -307,41 +270,27 @@ export default function ServicesDataTable({ services, loading, refetch }) {
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
                     Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredServices.length)} of{' '}
-                    {filteredServices.length} entries
+                    {Math.min(currentPage * rowsPerPage, filteredCategories.length)} of{' '}
+                    {filteredCategories.length} entries
                 </div>
                 <div className="flex gap-1">
                     <Button
-                        icon="pi pi-angle-double-left"
                         onClick={() => setCurrentPage(1)}
                         disabled={currentPage === 1}
                         className="p-1"
-                    />
-                    <Button
-                        icon="pi pi-angle-left"
-                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="p-1"
                     >
-                        <ChevronLeft />
+                        <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
                         Page {currentPage} of {totalPages}
                     </span>
                     <Button
-                        icon="pi pi-angle-right"
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                         disabled={currentPage === totalPages}
                         className="p-1"
                     >
-                        <ChevronRight />
+                        <ChevronRight className="h-4 w-4" />
                     </Button>
-                    <Button
-                        icon="pi pi-angle-double-right"
-                        onClick={() => setCurrentPage(totalPages)}
-                        disabled={currentPage === totalPages}
-                        className="p-1"
-                    />
                 </div>
             </div>
         );
@@ -354,12 +303,12 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search services..."
-                    className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 border-primary border w-full"
+                    placeholder="Search categories..."
+                    className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full border border-primary"
                 />
                 <Button
                     icon={<Plus size={18} />}
-                    label="Add Service"
+                    label="Add Category"
                     onClick={() => setShowAddModal(true)}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
                 />
@@ -382,27 +331,9 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Category"
-                                    value={filters.category}
-                                    onChange={(e) => handleFilterChange('category', e.target.value)}
-                                    className="text-xs p-1 border rounded w-full"
-                                />
-                            </th>
-                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <input
-                                    type="text"
-                                    placeholder="Price"
-                                    value={filters.price}
-                                    onChange={(e) => handleFilterChange('price', e.target.value)}
-                                    className="text-xs p-1 border rounded w-full"
-                                />
-                            </th>
-                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                <input
-                                    type="text"
-                                    placeholder="Provider Type"
-                                    value={filters.provider_type}
-                                    onChange={(e) => handleFilterChange('provider_type', e.target.value)}
+                                    placeholder="Order"
+                                    value={filters.order}
+                                    onChange={(e) => handleFilterChange('order', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
@@ -423,90 +354,84 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                     <tbody className="bg-white divide-y divide-gray-200 text-sm">
                         {loading ? (
                             <tr>
-                                <td colSpan="6" className="px-3 py-4 text-center">
+                                <td colSpan="4" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading services...
+                                        Loading categories...
                                     </div>
                                 </td>
                             </tr>
-                        ) : paginatedServices.length === 0 ? (
+                        ) : paginatedCategories.length === 0 ? (
                             <tr>
-                                <td colSpan="6" className="px-3 py-4 text-center">
-                                    No services found
+                                <td colSpan="4" className="px-3 py-4 text-center">
+                                    No categories found
                                 </td>
                             </tr>
                         ) : (
-                            paginatedServices.map((service) => (
-                                <tr key={service.id} className="hover:bg-gray-50">
+                            paginatedCategories.map((category) => (
+                                <tr key={category.id} className="hover:bg-gray-50">
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            {service.icon && (
+                                            {category.icon && (
                                                 <img
-                                                    src={`https://api.sehtnaa.com/storage/${service.icon}`}
-                                                    alt="Service icon"
+                                                    src={`https://api.sehtnaa.com/storage/${category.icon}`}
+                                                    alt="Category icon"
                                                     className="w-8 h-8 rounded-full object-cover"
                                                 />
                                             )}
                                             <div>
-                                                <div className="font-medium">{service.name.en}</div>
-                                                <div className="text-gray-500 text-xs">{service.name.ar}</div>
+                                                <div className="font-medium">{category.name.en}</div>
+                                                <div className="text-gray-500 text-xs">{category.name.ar}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
-                                        {service.category.name.en}
+                                        {category.order}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
-                                        {service.price} SAR
-                                    </td>
-                                    <td className="px-3 py-4 whitespace-nowrap capitalize">
-                                        {service.provider_type}
-                                    </td>
-                                    <td className="px-3 py-4 whitespace-nowrap">
-                                        {statusBadge(service.is_active)}
+                                        {statusBadge(category.is_active)}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="Edit service" closeDelay={0} delay={700}>
+                                            <Tooltip content="Edit category" closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
-                                                    onClick={() => prepareEditForm(service)}
+                                                    onClick={() => prepareEditForm(category)}
                                                 >
                                                     <Edit size={18} />
                                                 </Button>
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={togglingServiceId === service.id ? 'Updating...' :
-                                                    `${service.is_active ? 'Deactivate' : 'Activate'} service`}
+                                                content={togglingCategoryId === category.id ? 'Updating...' :
+                                                    `${category.is_active ? 'Deactivate' : 'Activate'} category`}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
                                                 <Button
-                                                    className={`${service.is_active ? 'text-red-500' : 'text-green-500'} ring-0`}
-                                                    onClick={() => handleToggleStatus(service.id, service.is_active)}
-                                                    disabled={togglingServiceId === service.id}
+                                                    className={`${category.is_active ? 'text-red-500' : 'text-green-500'} ring-0`}
+                                                    onClick={() => handleToggleStatus(category.id, category.is_active)}
+                                                    disabled={togglingCategoryId === category.id}
                                                 >
-                                                    {togglingServiceId === service.id ? (
+                                                    {togglingCategoryId === category.id ? (
                                                         <Loader2 size={18} className="animate-spin" />
                                                     ) : (
-                                                        service.is_active ? <X /> : <Check />
+                                                        category.is_active ? <X /> : <Check />
                                                     )}
                                                 </Button>
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={deletingServiceId === service.id ? 'Deleting...' : 'Delete service'}
+                                                content={deletingCategoryId === category.id ? 'Deleting...' : 'Delete category'}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
                                                 <Button
                                                     className="text-red-500 ring-0"
-                                                    onClick={() => handleDeleteClick(service.id)}
-                                                    disabled={deletingServiceId === service.id}
+                                                    onClick={() => handleDeleteClick(category.id)}
+                                                    disabled={deletingCategoryId === category.id}
                                                 >
-                                                    {deletingServiceId === service.id ? (
+                                                    {deletingCategoryId === category.id ? (
                                                         <Loader2 size={18} className="animate-spin" />
                                                     ) : (
                                                         <Trash2 size={18} />
@@ -525,7 +450,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
             {/* Pagination */}
             {!loading && renderPagination()}
 
-            {/* Add Service Modal */}
+            {/* Add Category Modal */}
             {showAddModal && (
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -542,8 +467,8 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Service</h2>
-                            <form onSubmit={handleAddService}>
+                            <h2 className="text-xl font-bold mb-4">Add New Category</h2>
+                            <form onSubmit={handleAddCategory}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
@@ -578,7 +503,6 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
                                             rows={3}
-                                            required
                                         />
                                     </div>
                                     <div>
@@ -589,53 +513,23 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
                                             rows={3}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
-                                        <select
-                                            name="provider_type"
-                                            value={formData.provider_type}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            required
-                                        >
-                                            <option value="individual">Individual</option>
-                                            <option value="organization">Organization</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (SAR)</label>
-                                        <input
-                                            type="number"
-                                            name="price"
-                                            value={formData.price}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="0"
-                                            step="0.01"
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
-                                        <input
-                                            type="number"
-                                            name="category_id"
-                                            value={formData.category_id}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="1"
-                                            required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                                        <input
+                                            type="number"
+                                            name="order"
+                                            value={formData.order}
+                                            onChange={handleFormChange}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            min="0"
+                                            required
+                                        />
+                                    </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
                                         <div className="flex items-center gap-2">
@@ -644,7 +538,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                                     <img src={iconPreview} alt="Icon preview" className="w-16 h-16 rounded-md object-cover" />
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleRemoveFile('icon')}
+                                                        onClick={handleRemoveFile}
                                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                                                     >
                                                         <X size={14} />
@@ -659,37 +553,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                                     <input
                                                         type="file"
                                                         accept="image/*"
-                                                        onChange={(e) => handleFileChange(e, 'icon')}
-                                                        className="hidden"
-                                                    />
-                                                </label>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
-                                        <div className="flex items-center gap-2">
-                                            {coverPreview ? (
-                                                <div className="relative">
-                                                    <img src={coverPreview} alt="Cover preview" className="w-16 h-16 rounded-md object-cover" />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveFile('cover')}
-                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                                                    >
-                                                        <X size={14} />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
-                                                    <div className="flex flex-col items-center justify-center">
-                                                        <ImageIcon size={20} className="text-gray-400" />
-                                                        <span className="text-xs text-gray-500">Upload Cover</span>
-                                                    </div>
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) => handleFileChange(e, 'cover')}
+                                                        onChange={handleFileChange}
                                                         className="hidden"
                                                     />
                                                 </label>
@@ -713,7 +577,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                                     >
-                                        Add Service
+                                        Add Category
                                     </button>
                                 </div>
                             </form>
@@ -722,7 +586,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                 </motion.div>
             )}
 
-            {/* Edit Service Modal */}
+            {/* Edit Category Modal */}
             {showEditModal && (
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -739,8 +603,8 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Service</h2>
-                            <form onSubmit={handleEditService}>
+                            <h2 className="text-xl font-bold mb-4">Edit Category</h2>
+                            <form onSubmit={handleEditCategory}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
@@ -775,7 +639,6 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
                                             rows={3}
-                                            required
                                         />
                                     </div>
                                     <div>
@@ -786,53 +649,23 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
                                             rows={3}
-                                            required
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
-                                        <select
-                                            name="provider_type"
-                                            value={formData.provider_type}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-
-                                        >
-                                            <option value="individual">Individual</option>
-                                            <option value="organization">Organization</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (SAR)</label>
-                                        <input
-                                            type="number"
-                                            name="price"
-                                            value={formData.price}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="0"
-                                            step="0.01"
-                                            required
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
-                                        <input
-                                            type="number"
-                                            name="category_id"
-                                            value={formData.category_id}
-                                            onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="1"
-                                            required
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                                        <input
+                                            type="number"
+                                            name="order"
+                                            value={formData.order}
+                                            onChange={handleFormChange}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            min="0"
+                                            required
+                                        />
+                                    </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
                                         <div className="flex items-center gap-2">
@@ -841,7 +674,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                                     <img src={iconPreview} alt="Icon preview" className="w-16 h-16 rounded-md object-cover" />
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleRemoveFile('icon')}
+                                                        onClick={handleRemoveFile}
                                                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                                                     >
                                                         <X size={14} />
@@ -858,38 +691,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    onChange={(e) => handleFileChange(e, 'icon')}
-                                                    className="hidden"
-                                                />
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
-                                        <div className="flex items-center gap-2">
-                                            {coverPreview && (
-                                                <div className="relative">
-                                                    <img src={coverPreview} alt="Cover preview" className="w-16 h-16 rounded-md object-cover" />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveFile('cover')}
-                                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
-                                                    >
-                                                        <X size={14} />
-                                                    </button>
-                                                </div>
-                                            )}
-                                            <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
-                                                <div className="flex flex-col items-center justify-center">
-                                                    <ImageIcon size={20} className="text-gray-400" />
-                                                    <span className="text-xs text-gray-500">
-                                                        {coverPreview ? 'Change Cover' : 'Upload Cover'}
-                                                    </span>
-                                                </div>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={(e) => handleFileChange(e, 'cover')}
+                                                    onChange={handleFileChange}
                                                     className="hidden"
                                                 />
                                             </label>
@@ -906,7 +708,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label className="ml-2 block text-sm text-gray-700">
-                                        Active Service
+                                        Active Category
                                     </label>
                                 </div>
 
@@ -925,7 +727,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                                     >
-                                        Update Service
+                                        Update Category
                                     </button>
                                 </div>
                             </form>
@@ -956,10 +758,10 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     <Trash2 className="h-5 w-5 text-red-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Delete Service</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">Delete Category</h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this service? This action cannot be undone.
+                                            Are you sure you want to delete this category? This action cannot be undone.
                                         </p>
                                     </div>
                                 </div>

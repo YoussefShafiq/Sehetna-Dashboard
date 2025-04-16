@@ -1,9 +1,9 @@
 import axios from 'axios';
-import React from 'react';
+import React from 'react'
 import { useQuery } from 'react-query';
-import ServicesDataTable from './ServicesDataTable';
 
-export default function Services() {
+export default function Admins() {
+
     function getServicesData() {
         return axios.get(
             `https://api.sehtnaa.com/api/services`,
@@ -19,15 +19,7 @@ export default function Services() {
         queryKey: ['ServicesData'],
         queryFn: getServicesData,
     });
+    return <>
 
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Services Management</h1>
-            <ServicesDataTable
-                services={servicesData?.data?.data || []}
-                loading={isServicesLoading}
-                refetch={refetch}
-            />
-        </div>
-    );
+    </>
 }

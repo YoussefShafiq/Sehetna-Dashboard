@@ -12,6 +12,8 @@ import { Toaster } from 'react-hot-toast';
 import GoHome from './components/GoHome';
 import SidebarContextProvider from './contexts/SidebarContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import Categories from './components/Categories';
+import Admins from './components/Admins';
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
         { path: 'providers', element: <ProtectedRoute> <Providers /> </ProtectedRoute> },
         { path: 'users', element: <ProtectedRoute> <Users /> </ProtectedRoute> },
         { path: 'services', element: <ProtectedRoute> <Services /> </ProtectedRoute> },
+        { path: 'categories', element: <ProtectedRoute> <Categories /> </ProtectedRoute> },
+        { path: 'admins', element: <ProtectedRoute> <Admins /> </ProtectedRoute> },
         { path: '*', element: <Notfound /> },
       ]
     },

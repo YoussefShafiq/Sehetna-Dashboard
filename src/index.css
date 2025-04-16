@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .active {
-    @apply bg-primary transition-all duration-500 text-white
+    @apply bg-primary transition-all duration-500 text-white font-bold
 }
 
 ::-webkit-scrollbar {

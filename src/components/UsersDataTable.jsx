@@ -65,10 +65,10 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
 
     const statusBadge = (status) => {
         const statusClass = status === 'active'
-            ? 'bg-green-100 text-green-800'
-            : 'bg-red-100 text-red-800';
+            ? 'bg-[#009379] text-white'
+            : 'bg-[#930002] text-white';
         return (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {status}
             </span>
         );
@@ -78,10 +78,10 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
         if (totalPages <= 1) return null;
 
         return (
-            <div className="flex justify-between items-center mt-4">
-                <div>
+            <div className="flex justify-between items-center mt-4 px-4 pb-1">
+                <div className='text-xs'>
                     Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredUsers.length)} of{' '}
+                    {Math.min(currentPage * rowsPerPage, filteredServices.length)} of{' '}
                     {filteredUsers.length} entries
                 </div>
                 <div className="flex gap-1">
@@ -96,7 +96,9 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                         disabled={currentPage === 1}
                         className="p-1"
-                    />
+                    >
+                        <ChevronLeft />
+                    </Button>
                     <span className="px-3 py-1">
                         Page {currentPage} of {totalPages}
                     </span>
@@ -105,7 +107,9 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                         disabled={currentPage === totalPages}
                         className="p-1"
-                    />
+                    >
+                        <ChevronRight />
+                    </Button>
                     <Button
                         icon="pi pi-angle-double-right"
                         onClick={() => setCurrentPage(totalPages)}
@@ -197,7 +201,10 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                         {loading ? (
                             <tr>
                                 <td colSpan="7" className="px-3 py-4 text-center">
-                                    Loading...
+                                    <div className="flex justify-center items-center gap-2">
+                                        <Loader2 className="animate-spin" size={18} />
+                                        Loading users...
+                                    </div>
                                 </td>
                             </tr>
                         ) : paginatedUsers.length === 0 ? (
