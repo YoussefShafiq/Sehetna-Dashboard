@@ -5,7 +5,7 @@ import Home from './components/Home';
 import Notfound from './components/Notfound';
 import Providers from './components/Providers';
 import Users from './components/Users';
-import Services from './components/Features';
+import Services from './components/Services';
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';

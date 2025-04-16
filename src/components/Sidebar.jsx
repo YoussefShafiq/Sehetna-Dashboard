@@ -17,12 +17,14 @@ export default function Sidebar() {
         try {
             let resopnse = await axios.post('https://api.sehtnaa.com/api/auth/logout', {}, { headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` } })
             localStorage.removeItem('userToken')
-            toast.success('logged out successfully', { duration: 2000 })
             navigate('/login')
+            toast.success('logged out successfully', { duration: 2000 })
             setloggingOut(false)
         } catch (error) {
             toast.error(error.response.data.message, { duration: 5000 })
             setloggingOut(false)
+            localStorage.removeItem('userToken')
+            navigate('/login')
         }
     }
 

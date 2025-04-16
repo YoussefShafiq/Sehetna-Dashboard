@@ -35,8 +35,8 @@ const HomeProvidersTable = ({ providers }) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {providers?.recent?.map((provider) => (
-                            <tr key={provider.id}>
+                        {providers?.recent?.map((provider, index) => (
+                            <tr key={index}>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {provider.first_name} {provider.last_name}
                                 </td>

@@ -41,8 +41,8 @@ const HomeUsersTable = ({ users }) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {users?.recent?.slice(0, 7).map((user) => (
-                            <tr key={user.id}>
+                        {users?.recent?.slice(0, 7).map((user, index) => (
+                            <tr key={index}>
                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     {user.first_name} {user.last_name}
                                 </td>
