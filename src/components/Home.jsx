@@ -5,6 +5,7 @@ import HomeProvidersTable from './HomeProvidersTable'
 import HomeServicesCard from './HomeFeaturesCard'
 import axios from 'axios'
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 
 export default function Home() {
 
@@ -24,6 +25,12 @@ export default function Home() {
     queryFn: getHomeData,
   })
 
+  const navigate = useNavigate();
+
+  const navTo = (path) => {
+    navigate(path)
+  }
+
 
   return <>
     <div className="flex lg:flex-row flex-col gap-5">
@@ -37,7 +44,7 @@ export default function Home() {
             <h2 className='font-bold text-4xl capitalize'>hello shafek 👋</h2>
             <div className="flex gap-5 items-center my-10">
               <button className='bg-gradient-to-r from-[#1c536a] to-[#3498c4] font-semibold border-[1px] px-3 py-2 rounded-lg' >Push a notification</button>
-              <button className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg'>Add new feature</button>
+              <button onClick={() => { navTo('/services') }} className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg'>Add new service</button>
             </div>
           </div>
           <div className="w-2/5 flex justify-center items-center">

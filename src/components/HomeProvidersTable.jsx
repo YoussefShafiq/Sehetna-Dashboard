@@ -27,11 +27,11 @@ const HomeProvidersTable = ({ providers }) => {
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Type
                             </th>
-                            {/* <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div className="flex items-center">
                                     Status
                                 </div>
-                            </th> */}
+                            </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -46,12 +46,12 @@ const HomeProvidersTable = ({ providers }) => {
                                         {provider.type}
                                     </div>
                                 </td>
-                                {/* <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-full
-                                        ${provider.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                    <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-md
+                                        ${provider.status === 'Active' ? 'bg-[#009379] ' : 'bg-[#930002] '}text-white`}>
                                         {provider.status}
                                     </div>
-                                </td> */}
+                                </td>
                             </tr>
                         ))}
                     </tbody>

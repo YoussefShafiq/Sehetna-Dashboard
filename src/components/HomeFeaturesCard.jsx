@@ -24,7 +24,7 @@ export default function HomeServicesCard({ services }) {
                         <div className="flex flex-col">
                             <h2 className='capitalize font-semibold text-black'>{service.name.en}</h2>
                             <h3 className='text-gray-500 text-xs'>created at 13/06/2023</h3>
-                            <h4 className='text-green-500 text-sm'>active</h4>
+                            <h4 className={`${service.status === 'Active' ? 'text-[#009379]' : 'text-[#930002]'} text-sm`}>{service.status}</h4>
                         </div>
                     </div>
                 </div>

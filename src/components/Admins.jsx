@@ -20,6 +20,6 @@ export default function Admins() {
         queryFn: getServicesData,
     });
     return <>
-
+        Admins
     </>
 }

@@ -14,6 +14,7 @@ import SidebarContextProvider from './contexts/SidebarContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Categories from './components/Categories';
 import Admins from './components/Admins';
+import Documents from './components/Documents';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         { index: true, element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'home', element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'providers', element: <ProtectedRoute> <Providers /> </ProtectedRoute> },
+        { path: 'documents', element: <ProtectedRoute> <Documents /> </ProtectedRoute> },
         { path: 'users', element: <ProtectedRoute> <Users /> </ProtectedRoute> },
         { path: 'services', element: <ProtectedRoute> <Services /> </ProtectedRoute> },
         { path: 'categories', element: <ProtectedRoute> <Categories /> </ProtectedRoute> },

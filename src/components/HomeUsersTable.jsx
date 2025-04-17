@@ -56,8 +56,8 @@ const HomeUsersTable = ({ users }) => {
                                     {user.email}
                                 </td>
                                 <td className="px-4 py-4 whitespace-nowrap">
-                                    <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-full
-                    ${user.status.toLowerCase() === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                    <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-md
+                    ${user.status.toLowerCase() === 'active' ? 'bg-[#009379] ' : 'bg-[#930002] '} text-white`}>
                                         {user.status}
                                     </div>
                                 </td>

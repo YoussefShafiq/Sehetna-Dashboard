@@ -458,7 +458,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         {service.category.name.en}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
-                                        {service.price} SAR
+                                        {service.price} EGP
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap capitalize">
                                         {service.provider_type}
@@ -609,7 +609,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
   al                                      </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (SAR)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
                                         <input
                                             type="number"
                                             name="price"
@@ -806,7 +806,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (SAR)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
                                         <input
                                             type="number"
                                             name="price"
