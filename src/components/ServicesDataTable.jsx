@@ -8,7 +8,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
 
-export default function ServicesDataTable({ services, loading, refetch }) {
+export default function ServicesDataTable({ services, loading, refetch, categories }) {
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -258,6 +258,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
     };
 
     const handleAddService = async (e) => {
+        setIsAdding(true);
         e.preventDefault();
         try {
             const formDataToSend = new FormData();
@@ -285,17 +286,19 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                     }
                 }
             );
-
+            setIsAdding(false);
             toast.success("Service added successfully", { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setIsAdding(false);
             toast.error("Failed to add service", { duration: 3000 });
         }
     };
 
     const handleEditService = async (e) => {
+        setIsEditing(true);
         e.preventDefault();
         try {
             const formDataToSend = new FormData();
@@ -325,12 +328,13 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                     }
                 }
             );
-
+            setIsEditing(false);
             toast.success("Service updated successfully", { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setIsEditing(false);
             toast.error(error.response.data.message, { duration: 3000 });
         }
     };
@@ -738,15 +742,18 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
-                                        <input
-                                            type="number"
+                                        <select
                                             name="category_id"
                                             value={formData.category_id}
                                             onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="1"
+                                            className={`w-full px-3 py-2 border rounded-md `}
                                             required
-                                        />
+                                        >
+                                            <option value="" disabled >Select a category</option>
+                                            {categories.map((category) => (
+                                                <option key={category.id} value={category.id}>{category.name.en}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 
@@ -826,9 +833,10 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 "
+                                        disabled={isAdding}
                                     >
-                                        Add Service
+                                        {isAdding ? <><Loader2 className="animate-spin" size={18} /></> : 'Add Service'}
                                     </button>
                                 </div>
                             </form>
@@ -1039,8 +1047,9 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={isEditing}
                                     >
-                                        Update Service
+                                        {isEditing ? <><Loader2 className="animate-spin" size={18} /></> : 'Update'}
                                     </button>
                                 </div>
                             </form>

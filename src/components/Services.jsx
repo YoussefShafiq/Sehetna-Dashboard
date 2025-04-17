@@ -4,6 +4,23 @@ import { useQuery } from 'react-query';
 import ServicesDataTable from './ServicesDataTable';
 
 export default function Services() {
+
+    function getCategoriesData() {
+        return axios.get(
+            `https://api.sehtnaa.com/api/categories`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                }
+            }
+        );
+    }
+
+    const { data: categoriesData, isLoading: isCategoriesLoading, isError: isCategoriesError } = useQuery({
+        queryKey: ['CategoriesData'],
+        queryFn: getCategoriesData,
+    });
+
     function getServicesData() {
         return axios.get(
             `https://api.sehtnaa.com/api/services`,
@@ -27,6 +44,7 @@ export default function Services() {
                 services={servicesData?.data?.data || []}
                 loading={isServicesLoading}
                 refetch={refetch}
+                categories={categoriesData?.data?.data || []}
             />
         </div>
     );

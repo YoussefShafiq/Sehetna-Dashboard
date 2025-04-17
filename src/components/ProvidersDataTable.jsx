@@ -71,14 +71,14 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
     };
 
     const statusBadge = (status) => {
-        const statusClass = status === 'approved'
-            ? 'bg-green-100 text-green-800'
-            : status === 'rejected'
-                ? 'bg-red-100 text-red-800'
-                : 'bg-yellow-100 text-yellow-800';
+        const statusClass = status === 'active'
+            ? 'bg-[#009379] text-white'
+            : status === 'inactive'
+                ? 'bg-[#930002] text-white'
+                : 'bg-yellow-500 text-white';
 
         return (
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass} capitalize`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center capitalize`}>
                 {status}
             </span>
         );
@@ -246,6 +246,33 @@ function ProviderTable({ providers, loading, title, refetch }) {
     const [rowsPerPage] = useState(10);
     const [showDocumentsModal, setShowDocumentsModal] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState(null);
+    const [togglingProviderId, setTogglingProviderId] = useState(null);
+
+
+    const handleToggleStatus = async (providerId, currentStatus) => {
+        setTogglingProviderId(providerId);
+        try {
+            const newStatus = currentStatus == 'active' ? 'de-active' : 'active';
+            await axios.post(
+                'https://api.sehtnaa.com/api/admin/providers/change-status',
+                {
+                    provider_id: providerId,
+                    status: newStatus
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                    }
+                }
+            );
+            toast.success(`Provider ${newStatus}d successfully`, { duration: 2000 });
+            refetch();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update provider status", { duration: 3000 });
+        } finally {
+            setTogglingProviderId(null);
+        }
+    };
 
     const handleFilterChange = (field, value) => {
         setFilters(prev => ({
@@ -390,6 +417,9 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Documents
                                 </th>
+                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200 text-sm">
@@ -432,6 +462,39 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                             >
                                                 <FileText size={18} />
                                             </button>
+                                        </td>
+                                        <td className="px-3 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-2">
+                                                {provider.user.status !== 'pending' && (
+                                                    <Tooltip
+                                                        content={togglingProviderId === provider.id ? 'Updating...' :
+                                                            provider.user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                                        closeDelay={0}
+                                                        delay={700}
+                                                    >
+                                                        <button
+                                                            onClick={() => handleToggleStatus(provider.id, provider.user.status)}
+                                                            disabled={togglingProviderId === provider.id}
+                                                            className={`${provider.user.status === 'active' ? 'text-red-500' : 'text-green-500'
+                                                                } hover:opacity-80`}
+                                                        >
+                                                            {togglingProviderId === provider.id ? (
+                                                                <Loader2 className="animate-spin" size={18} />
+                                                            ) : provider.user.status === 'active' ? (
+                                                                <X size={18} />
+                                                            ) : (
+                                                                <Check size={18} />
+                                                            )}
+                                                        </button>
+                                                    </Tooltip>
+                                                )}
+                                                <button
+                                                    onClick={() => handleShowDocuments(provider)}
+                                                    className="text-blue-500 hover:text-blue-700"
+                                                >
+                                                    <FileText size={18} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

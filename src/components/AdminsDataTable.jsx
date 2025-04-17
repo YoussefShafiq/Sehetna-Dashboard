@@ -158,8 +158,8 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
         try {
             // For update, we might need to use a different endpoint if available
             // This is a placeholder - adjust according to your API
-            await axios.put(
-                `https://api.sehtnaa.com/api/admin/${selectedAdmin.id}`,
+            await axios.post(
+                `https://api.sehtnaa.com/api/admin/update-admin`,
                 formData,
                 {
                     headers: {
