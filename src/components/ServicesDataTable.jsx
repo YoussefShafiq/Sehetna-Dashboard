@@ -943,15 +943,18 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
-                                        <input
-                                            type="number"
+                                        <select
                                             name="category_id"
                                             value={formData.category_id}
                                             onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
-                                            min="1"
+                                            className={`w-full px-3 py-2 border rounded-md `}
                                             required
-                                        />
+                                        >
+                                            <option value="" disabled >Select a category</option>
+                                            {categories.map((category) => (
+                                                <option key={category.id} value={category.id}>{category.name.en}</option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
 
