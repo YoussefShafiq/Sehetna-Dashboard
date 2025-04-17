@@ -41,10 +41,10 @@ export default function Home() {
         <div className="flex items-center gap-5 bg-gradient-to-r from-[#1c536a] to-[#3498c4] p-5 rounded-2xl text-white">
           <div className="w-3/5 flex flex-col gap-5">
             <h1 className='font-light capitalize'>Dashbaord overview</h1>
-            <h2 className='font-bold text-4xl capitalize'>hello shafek 👋</h2>
+            <h2 className='font-bold text-4xl capitalize'>hello {localStorage.getItem('username')} 👋</h2>
             <div className="flex gap-5 items-center my-10">
-              <button className='bg-gradient-to-r from-[#1c536a] to-[#3498c4] font-semibold border-[1px] px-3 py-2 rounded-lg' >Push a notification</button>
-              <button onClick={() => { navTo('/services') }} className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg'>Add new service</button>
+              <button onClick={() => { navTo('/campaigns') }} className='bg-gradient-to-r from-[#1c536a] to-[#3498c4] font-semibold border-[1px] px-3 py-2 rounded-lg capitalize' >Add new campaign</button>
+              <button onClick={() => { navTo('/services') }} className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg capitalize'>Add new service</button>
             </div>
           </div>
           <div className="w-2/5 flex justify-center items-center">

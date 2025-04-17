@@ -25,6 +25,7 @@ export default function Login() {
             toast.success('logged in successfully', {
                 duration: 2000,
             })
+            localStorage.setItem('username', data.data.user.first_name)
             localStorage.setItem('userToken', data.data.token)
             localStorage.setItem('role', data.data.user.admin.role)
             navigate('/')

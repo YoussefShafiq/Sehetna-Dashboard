@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import logo from '../assets/images/sehetna.png'
 import { NavLink, useNavigate } from 'react-router-dom'
-import { BadgeAlert, File, HandHeart, Home, LogOutIcon, SendToBack, Shield, SidebarClose, User2Icon, Users2Icon } from 'lucide-react'
+import { BadgeAlert, Bell, File, HandHeart, Home, LogOutIcon, SendToBack, Shield, SidebarClose, User2Icon, Users2Icon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { SidebarContext } from '../contexts/SidebarContext'
 import axios from 'axios'
@@ -36,12 +36,12 @@ export default function Sidebar() {
             <div className={`absolute top-0 right-0 ${sidebarOpen ? '-translate-x-full ' : 'translate-x-[calc(100%+5px)] p-1.5 flex justify-center items-center bg-white bg-opacity-60 aspect-square rounded-full'} translate-y-full transition-all duration-500`}>
                 <button onClick={toggleSidebar} ><SidebarClose /></button>
             </div>
-            <div className="h-full bg-white rounded-2xl p-5 flex flex-col justify-between">
+            <div className="h-full bg-white rounded-2xl p-5 flex flex-col justify-between overflow-y-auto">
                 <div className="">
                     <div className="flex justify-center items-center overflow-hidden mb-5">
                         <img src={logo} alt="Logo" className="w-4/5" />
                     </div>
-                    <div className="flex flex-col gap-4 text-gray-400 text-sm">
+                    <div className="flex flex-col gap-2.5 text-gray-400 text-sm">
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/" ><Home size={18} /> Home</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/users" ><User2Icon size={18} /> Users</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/services" ><HandHeart size={18} /> Services</NavLink>
@@ -50,6 +50,7 @@ export default function Sidebar() {
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/documents" ><File size={18} /> Documents</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/complaints" ><BadgeAlert size={18} /> Complaints</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/requests" ><BadgeAlert size={18} /> Reqiests</NavLink>
+                        <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/campaigns" ><Bell size={18} /> Campaigns</NavLink>
                         {localStorage.getItem('role')?.toLowerCase() === 'super_admin' && <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/admins" ><Shield size={18} /> Admins</NavLink>}
                     </div>
                 </div>

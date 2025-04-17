@@ -17,6 +17,7 @@ import Admins from './components/Admins';
 import Documents from './components/Documents';
 import Complaints from './components/Complaints';
 import Requests from './components/Requests';
+import Campaigns from './components/Campaigns';
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
         { path: 'documents', element: <ProtectedRoute> <Documents /> </ProtectedRoute> },
         { path: 'complaints', element: <ProtectedRoute> <Complaints /> </ProtectedRoute> },
         { path: 'requests', element: <ProtectedRoute> <Requests /> </ProtectedRoute> },
+        { path: 'campaigns', element: <ProtectedRoute> <Campaigns /> </ProtectedRoute> },
         { path: 'admins', element: <ProtectedRoute> <Admins /> </ProtectedRoute> },
         { path: '*', element: <Notfound /> },
       ]
