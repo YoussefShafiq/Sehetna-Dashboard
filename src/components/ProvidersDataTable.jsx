@@ -464,37 +464,31 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                             </button>
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2">
-                                                {provider.user.status !== 'pending' && (
-                                                    <Tooltip
-                                                        content={togglingProviderId === provider.id ? 'Updating...' :
-                                                            provider.user.status === 'active' ? 'Deactivate' : 'Activate'}
-                                                        closeDelay={0}
-                                                        delay={700}
-                                                    >
-                                                        <button
-                                                            onClick={() => handleToggleStatus(provider.id, provider.user.status)}
-                                                            disabled={togglingProviderId === provider.id}
-                                                            className={`${provider.user.status === 'active' ? 'text-red-500' : 'text-green-500'
-                                                                } hover:opacity-80`}
-                                                        >
-                                                            {togglingProviderId === provider.id ? (
-                                                                <Loader2 className="animate-spin" size={18} />
-                                                            ) : provider.user.status === 'active' ? (
-                                                                <X size={18} />
-                                                            ) : (
-                                                                <Check size={18} />
-                                                            )}
-                                                        </button>
-                                                    </Tooltip>
-                                                )}
-                                                <button
-                                                    onClick={() => handleShowDocuments(provider)}
-                                                    className="text-blue-500 hover:text-blue-700"
+
+                                            {provider.user.status !== 'pending' && (
+                                                <Tooltip
+                                                    content={togglingProviderId === provider.id ? 'Updating...' :
+                                                        provider.user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                                    closeDelay={0}
+                                                    delay={700}
                                                 >
-                                                    <FileText size={18} />
-                                                </button>
-                                            </div>
+                                                    <button
+                                                        onClick={() => handleToggleStatus(provider.id, provider.user.status)}
+                                                        disabled={togglingProviderId === provider.id}
+                                                        className={`${provider.user.status === 'active' ? 'text-red-500' : 'text-green-500'
+                                                            } hover:opacity-80`}
+                                                    >
+                                                        {togglingProviderId === provider.id ? (
+                                                            <Loader2 className="animate-spin" size={18} />
+                                                        ) : provider.user.status === 'active' ? (
+                                                            <X size={18} />
+                                                        ) : (
+                                                            <Check size={18} />
+                                                        )}
+                                                    </button>
+                                                </Tooltip>
+                                            )}
+
                                         </td>
                                     </tr>
                                 ))

@@ -23,6 +23,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [updatingCategory, setUpdatingCategory] = useState(false);
 
     // Form state for add/edit
     const [formData, setFormData] = useState({
@@ -134,6 +135,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
 
     const handleAddCategory = async (e) => {
         e.preventDefault();
+        setUpdatingCategory(true);
         try {
             const formDataToSend = new FormData();
 
@@ -157,18 +159,20 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                     }
                 }
             );
-
+            setUpdatingCategory(false);
             toast.success("Category added successfully", { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingCategory(false);
             toast.error("Failed to add category", { duration: 3000 });
         }
     };
 
     const handleEditCategory = async (e) => {
         e.preventDefault();
+        setUpdatingCategory(true);
         try {
             const formDataToSend = new FormData();
 
@@ -194,12 +198,13 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                     }
                 }
             );
-
+            setUpdatingCategory(false);
             toast.success("Category updated successfully", { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingCategory(false);
             toast.error(error.response?.data?.message || "Failed to update category", { duration: 3000 });
         }
     };
@@ -576,8 +581,10 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingCategory}
                                     >
-                                        Add Category
+                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Add Category'}
+
                                     </button>
                                 </div>
                             </form>
@@ -726,8 +733,9 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingCategory}
                                     >
-                                        Update Category
+                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Category'}
                                     </button>
                                 </div>
                             </form>

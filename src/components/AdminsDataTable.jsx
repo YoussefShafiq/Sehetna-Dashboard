@@ -24,6 +24,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
     const [selectedAdmin, setSelectedAdmin] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [adminToDelete, setAdminToDelete] = useState(null);
+    const [updatingAdmin, setUpdatingAdmin] = useState(false);
 
     // Form state for add/edit
     const [formData, setFormData] = useState({
@@ -121,7 +122,9 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
         if (!formData.email) newErrors.email = 'Email is required';
         if (!formData.phone) newErrors.phone = 'Phone is required';
         if (!formData.role) newErrors.role = 'Role is required';
-        if (!formData.password && !showEditModal) newErrors.password = 'Password is required';
+
+        // Only require password for new admin creation
+        if (!showEditModal && !formData.password) newErrors.password = 'Password is required';
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -129,12 +132,17 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
     const handleAddAdmin = async (e) => {
         e.preventDefault();
+        setUpdatingAdmin(true);
         if (!validateForm()) return;
+
+        // Create a copy of formData without password if it's empty
+        const payload = { ...formData };
+        if (!payload.password) delete payload.password;
 
         try {
             await axios.post(
                 'https://api.sehtnaa.com/api/admin/create-admin',
-                formData,
+                payload, // Use the modified payload
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('userToken')}`
@@ -142,37 +150,43 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                 }
             );
 
+            setUpdatingAdmin(false);
             toast.success("Admin added successfully", { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingAdmin(false);
             toast.error(error.response?.data?.message || "Failed to add admin", { duration: 3000 });
         }
     };
 
     const handleUpdateAdmin = async (e) => {
         e.preventDefault();
+        setUpdatingAdmin(true);
         if (!validateForm()) return;
 
+        // Create a copy of formData without password if it's empty
+        const payload = { ...formData };
+        if (!payload.password) delete payload.password;
+
         try {
-            // For update, we might need to use a different endpoint if available
-            // This is a placeholder - adjust according to your API
             await axios.post(
                 `https://api.sehtnaa.com/api/admin/update-admin`,
-                formData,
+                payload, // Use the modified payload
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('userToken')}`
                     }
                 }
             );
-
+            setUpdatingAdmin(false);
             toast.success("Admin updated successfully", { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingAdmin(false);
             toast.error(error.response?.data?.message || "Failed to update admin", { duration: 3000 });
         }
     };
@@ -562,8 +576,10 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingAdmin}
                                     >
-                                        Add Admin
+                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'add Admin'}
+
                                     </button>
                                 </div>
                             </form>
@@ -648,13 +664,16 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">New Password (leave blank to keep current)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            New Password (leave blank to keep current)
+                                        </label>
                                         <input
                                             type="password"
                                             name="password"
                                             value={formData.password}
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
+                                            placeholder="Leave empty to keep current password"
                                         />
                                     </div>
                                     <div>
@@ -689,8 +708,9 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingAdmin}
                                     >
-                                        Update Admin
+                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Admin'}
                                     </button>
                                 </div>
                             </form>

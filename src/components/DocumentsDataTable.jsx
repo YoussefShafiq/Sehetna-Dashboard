@@ -23,6 +23,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [documentToDelete, setDocumentToDelete] = useState(null);
+    const [updatingDocument, setUpdatingDocument] = useState(false);
     const queryClient = useQueryClient();
 
     // Form state for add/edit
@@ -49,6 +50,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
 
     const handleAddDocument = async (e) => {
         e.preventDefault();
+        setUpdatingDocument(true);
         try {
             await axios.post(
                 'https://api.sehtnaa.com/api/admin/providers/add-document',
@@ -59,18 +61,20 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                     }
                 }
             );
-
+            setUpdatingDocument(false);
             toast.success("Document added successfully", { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingDocument(false);
             toast.error(error.response?.data?.message || "Failed to add document", { duration: 3000 });
         }
     };
 
     const handleEditDocument = async (e) => {
         e.preventDefault();
+        setUpdatingDocument(true);
         try {
             await axios.post(
                 `https://api.sehtnaa.com/api/admin/providers/required-documents/${selectedDocument.id}`,
@@ -81,12 +85,13 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                     }
                 }
             );
-
+            setUpdatingDocument(false);
             toast.success("Document updated successfully", { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
+            setUpdatingDocument(false);
             toast.error(error.response?.data?.message || "Failed to update document", { duration: 3000 });
         }
     };
@@ -371,8 +376,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingDocument}
                                     >
-                                        Add Document
+                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Add Document'}
+
                                     </button>
                                 </div>
                             </form>
@@ -440,8 +447,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        disabled={updatingDocument}
                                     >
-                                        Update Document
+                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Document'}
+
                                     </button>
                                 </div>
                             </form>
