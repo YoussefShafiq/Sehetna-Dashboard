@@ -15,6 +15,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import Categories from './components/Categories';
 import Admins from './components/Admins';
 import Documents from './components/Documents';
+import Complaints from './components/Complaints';
 
 function App() {
 
@@ -24,11 +25,12 @@ function App() {
       path: '', element: <Layout />, children: [
         { index: true, element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'home', element: <ProtectedRoute> <Home /> </ProtectedRoute> },
-        { path: 'providers', element: <ProtectedRoute> <Providers /> </ProtectedRoute> },
-        { path: 'documents', element: <ProtectedRoute> <Documents /> </ProtectedRoute> },
         { path: 'users', element: <ProtectedRoute> <Users /> </ProtectedRoute> },
         { path: 'services', element: <ProtectedRoute> <Services /> </ProtectedRoute> },
         { path: 'categories', element: <ProtectedRoute> <Categories /> </ProtectedRoute> },
+        { path: 'providers', element: <ProtectedRoute> <Providers /> </ProtectedRoute> },
+        { path: 'documents', element: <ProtectedRoute> <Documents /> </ProtectedRoute> },
+        { path: 'complaints', element: <ProtectedRoute> <Complaints /> </ProtectedRoute> },
         { path: 'admins', element: <ProtectedRoute> <Admins /> </ProtectedRoute> },
         { path: '*', element: <Notfound /> },
       ]

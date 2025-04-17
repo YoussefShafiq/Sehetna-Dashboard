@@ -1,12 +1,12 @@
 import axios from 'axios';
-import React from 'react'
+import React from 'react';
 import { useQuery } from 'react-query';
+import AdminsDataTable from './AdminsDataTable';
 
 export default function Admins() {
-
-    function getServicesData() {
+    function getAdminsData() {
         return axios.get(
-            `https://api.sehtnaa.com/api/services`,
+            `https://api.sehtnaa.com/api/admin`,
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('userToken')}`
@@ -15,11 +15,19 @@ export default function Admins() {
         );
     }
 
-    const { data: servicesData, isLoading: isServicesLoading, isError: isServicesError, refetch } = useQuery({
-        queryKey: ['ServicesData'],
-        queryFn: getServicesData,
+    const { data: AdminsData, isLoading: isAdminsLoading, isError: isAdminsError, refetch } = useQuery({
+        queryKey: ['AdminsData'],
+        queryFn: getAdminsData,
     });
-    return <>
-        Admins
-    </>
+
+    return (
+        <div className="p-4">
+            <h1 className="text-2xl font-bold mb-6 text-center">Admins Management</h1>
+            <AdminsDataTable
+                admins={AdminsData?.data?.data || []}
+                loading={isAdminsLoading}
+                refetch={refetch}
+            />
+        </div>
+    );
 }

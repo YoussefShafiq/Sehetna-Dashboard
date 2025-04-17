@@ -26,6 +26,7 @@ export default function Login() {
                 duration: 2000,
             })
             localStorage.setItem('userToken', data.data.token)
+            localStorage.setItem('role', data.data.user.user_type)
             navigate('/')
 
         } catch (error) {

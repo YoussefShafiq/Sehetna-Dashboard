@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import toast from 'react-hot-toast';
 import { Tooltip } from '@heroui/tooltip';
-import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight, ChevronLeft, List } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
@@ -26,6 +26,18 @@ export default function ServicesDataTable({ services, loading, refetch }) {
     const [selectedService, setSelectedService] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [serviceToDelete, setServiceToDelete] = useState(null);
+    const [showRequirementsModal, setShowRequirementsModal] = useState(false);
+    const [requirements, setRequirements] = useState([]);
+    const [showAddRequirementModal, setShowAddRequirementModal] = useState(false);
+    const [showEditRequirementModal, setShowEditRequirementModal] = useState(false);
+    const [selectedRequirement, setSelectedRequirement] = useState(null);
+    const [requirementForm, setRequirementForm] = useState({
+        name: { en: '', ar: '' },
+        type: 'input'
+    });
+    const [isDeleting, setisDeleting] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const queryClient = useQueryClient();
 
     // Form state for add/edit
@@ -41,6 +53,101 @@ export default function ServicesDataTable({ services, loading, refetch }) {
     const [coverFile, setCoverFile] = useState(null);
     const [iconPreview, setIconPreview] = useState('');
     const [coverPreview, setCoverPreview] = useState('');
+
+
+    const fetchRequirements = async (service) => {
+        // After refetch, services will be updated, so we can get the fresh requirements
+        const updatedService = services.find(s => s.id === service.id);
+        setRequirements(updatedService?.requirements || []);
+    };
+
+    const handleShowRequirements = (service) => {
+        setSelectedService(service);
+        fetchRequirements(service);
+        setShowRequirementsModal(true);
+    };
+
+    const handleAddRequirement = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(
+                `https://api.sehtnaa.com/api/services/${selectedService.id}/requirements`,
+                requirementForm,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                    }
+                }
+            );
+            toast.success("Requirement added successfully", { duration: 2000 });
+            await refetch(); // Wait for services to be refetched
+            fetchRequirements(selectedService); // Then update requirements from fresh services data
+            setShowAddRequirementModal(false);
+            setRequirementForm({
+                name: { en: '', ar: '' },
+                type: 'input'
+            });
+        } catch (error) {
+            toast.error(error.response.data.message, { duration: 3000 });
+        }
+    };
+
+    const handleEditRequirement = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(
+                `https://api.sehtnaa.com/api/services/requirements/${selectedRequirement.id}`,
+                {
+                    ...requirementForm,
+                    _method: 'POST'
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                    }
+                }
+            );
+            toast.success("Requirement updated successfully", { duration: 2000 });
+            await refetch(); // Wait for services to be refetched
+            fetchRequirements(selectedService); // Then update requirements from fresh services data
+            setShowEditRequirementModal(false);
+        } catch (error) {
+            toast.error(error.response.data.message, { duration: 3000 });
+        }
+    };
+
+    useEffect(() => {
+        if (showRequirementsModal && selectedService) {
+            fetchRequirements(selectedService);
+        }
+    }, [services, showRequirementsModal, selectedService]);
+
+    const handleDeleteRequirement = async (requirementId) => {
+        try {
+            await axios.delete(
+                `https://api.sehtnaa.com/api/services/requirements/${requirementId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                    }
+                }
+            );
+            toast.success("Requirement deleted successfully", { duration: 2000 });
+            await refetch(); // Wait for services to be refetched
+            fetchRequirements(selectedService); // Then update requirements from fresh services data
+        } catch (error) {
+            toast.error("Failed to delete requirement", { duration: 3000 });
+        }
+    };
+
+    const prepareEditRequirement = (requirement) => {
+        setSelectedRequirement(requirement);
+        setRequirementForm({
+            name: requirement.name,
+            type: requirement.type
+        });
+        setShowEditRequirementModal(true);
+    };
 
     const handleFilterChange = (field, value) => {
         setFilters(prev => ({
@@ -468,6 +575,14 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
+                                            <Tooltip content="Service requirements" closeDelay={0} delay={700}>
+                                                <Button
+                                                    className="text-purple-500 ring-0"
+                                                    onClick={() => handleShowRequirements(service)}
+                                                >
+                                                    <List size={18} />
+                                                </Button>
+                                            </Tooltip>
                                             <Tooltip content="Edit service" closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
@@ -606,7 +721,7 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                         >
                                             <option value="individual">Individual</option>
                                             <option value="organizationalal">Organizatialonalal</option>
-  al                                      </select>
+                                            al                                      </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
@@ -980,6 +1095,280 @@ export default function ServicesDataTable({ services, loading, refetch }) {
                                     Delete
                                 </button>
                             </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+
+            {/* Requirements Modal */}
+            {showRequirementsModal && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowRequirementsModal(false)}
+                >
+                    <motion.div
+                        initial={{ y: -50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 50, opacity: 0 }}
+                        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-xl font-bold">Service Requirements</h2>
+                                <div className="flex gap-2">
+                                    <Button
+                                        icon={<Plus size={18} />}
+                                        label="Add Requirement"
+                                        onClick={() => setShowAddRequirementModal(true)}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
+                                    />
+                                    <Button
+                                        icon={<X size={18} />}
+                                        onClick={() => setShowRequirementsModal(false)}
+                                        className="text-gray-700 hover:bg-gray-100 px-2 py-1 rounded-xl shadow-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name (EN)</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name (AR)</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200 text-sm">
+                                        {requirements.length === 0 ? (
+                                            <tr>
+                                                <td colSpan="4" className="px-3 py-4 text-center">
+                                                    No requirements found
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            requirements.map((requirement) => (
+                                                <tr key={requirement.id} className="hover:bg-gray-50">
+                                                    <td className="px-3 py-4 whitespace-nowrap">{requirement.name.en}</td>
+                                                    <td className="px-3 py-4 whitespace-nowrap">{requirement.name.ar}</td>
+                                                    <td className="px-3 py-4 whitespace-nowrap capitalize">{requirement.type}</td>
+                                                    <td className="px-3 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2">
+                                                            <Tooltip content="Edit requirement" closeDelay={0} delay={700}>
+                                                                <Button
+                                                                    className="text-blue-500 ring-0"
+                                                                    onClick={() => prepareEditRequirement(requirement)}
+                                                                >
+                                                                    <Edit size={18} />
+                                                                </Button>
+                                                            </Tooltip>
+                                                            <Tooltip content="Delete requirement" closeDelay={0} delay={700}>
+                                                                <Button
+                                                                    className="text-red-500 ring-0"
+                                                                    onClick={() => handleDeleteRequirement(requirement.id)}
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </Button>
+                                                            </Tooltip>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+
+            {/* Add Requirement Modal */}
+            {showAddRequirementModal && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowAddRequirementModal(false)}
+                >
+                    <motion.div
+                        initial={{ y: -50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 50, opacity: 0 }}
+                        className="bg-white rounded-lg shadow-xl w-full max-w-md"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-6">
+                            <h2 className="text-xl font-bold mb-4">Add New Requirement</h2>
+                            <form onSubmit={handleAddRequirement}>
+                                <div className="grid grid-cols-1 gap-4 mb-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <input
+                                            type="text"
+                                            name="name.en"
+                                            value={requirementForm.name.en}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                name: {
+                                                    ...prev.name,
+                                                    en: e.target.value
+                                                }
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <input
+                                            type="text"
+                                            name="name.ar"
+                                            value={requirementForm.name.ar}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                name: {
+                                                    ...prev.name,
+                                                    ar: e.target.value
+                                                }
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                        <select
+                                            name="type"
+                                            value={requirementForm.type}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                type: e.target.value
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        >
+                                            <option value="input">Input</option>
+                                            <option value="file">File</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAddRequirementModal(false)}
+                                        className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Add Requirement
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+
+            {/* Edit Requirement Modal */}
+            {showEditRequirementModal && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowEditRequirementModal(false)}
+                >
+                    <motion.div
+                        initial={{ y: -50, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 50, opacity: 0 }}
+                        className="bg-white rounded-lg shadow-xl w-full max-w-md"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="p-6">
+                            <h2 className="text-xl font-bold mb-4">Edit Requirement</h2>
+                            <form onSubmit={handleEditRequirement}>
+                                <div className="grid grid-cols-1 gap-4 mb-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <input
+                                            type="text"
+                                            name="name.en"
+                                            value={requirementForm.name.en}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                name: {
+                                                    ...prev.name,
+                                                    en: e.target.value
+                                                }
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <input
+                                            type="text"
+                                            name="name.ar"
+                                            value={requirementForm.name.ar}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                name: {
+                                                    ...prev.name,
+                                                    ar: e.target.value
+                                                }
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                        <select
+                                            name="type"
+                                            value={requirementForm.type}
+                                            onChange={(e) => setRequirementForm(prev => ({
+                                                ...prev,
+                                                type: e.target.value
+                                            }))}
+                                            className="w-full px-3 py-2 border rounded-md"
+                                            required
+                                        >
+                                            <option value="input">Input</option>
+                                            <option value="file">File</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-3 mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowEditRequirementModal(false)}
+                                        className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                    >
+                                        Update Requirement
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </motion.div>
                 </motion.div>
