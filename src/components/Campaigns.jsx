@@ -11,6 +11,7 @@ export default function Campaigns() {
     const [filters, setFilters] = useState({
         global: '',
         title: '',
+        message: '',
         user_type: '',
         status: ''
     });
@@ -94,6 +95,7 @@ export default function Campaigns() {
                 campaign.title.toLowerCase().includes(filters.global.toLowerCase()) ||
                 campaign.body.toLowerCase().includes(filters.global.toLowerCase())) &&
             (filters.title === '' || campaign.title.toLowerCase().includes(filters.title.toLowerCase())) &&
+            (filters.message === '' || campaign.body.toLowerCase().includes(filters.message.toLowerCase())) &&  // Add this line
             (filters.status === '' || campaignStatus.includes(filters.status.toLowerCase()))
         );
     }) || [];
@@ -190,7 +192,13 @@ export default function Campaigns() {
                                     />
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Message
+                                    <input
+                                        type="text"
+                                        placeholder="Message"
+                                        value={filters.message}
+                                        onChange={(e) => handleFilterChange('message', e.target.value)}
+                                        className="text-xs p-1 border rounded w-full"
+                                    />
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
