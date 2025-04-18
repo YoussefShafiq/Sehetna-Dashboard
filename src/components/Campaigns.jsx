@@ -63,7 +63,7 @@ export default function Campaigns() {
         e.preventDefault();
         setIsCreating(true);
         try {
-            await axios.post(
+            const res = await axios.post(
                 'https://api.sehtnaa.com/api/admin/notifications/campaigns',
                 formData,
                 {
@@ -72,7 +72,7 @@ export default function Campaigns() {
                     }
                 }
             );
-            toast.success("Campaign created successfully", { duration: 2000 });
+            toast.success(res.data.message, { duration: 2000 });
             setShowAddModal(false);
             setFormData({
                 title: '',

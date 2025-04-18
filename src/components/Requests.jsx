@@ -139,6 +139,7 @@ export default function Requests() {
 
     return (
         <div className="p-4">
+            <h1 className="text-2xl font-bold mb-6 text-center">Requests</h1>
             <div className="shadow-2xl rounded-2xl overflow-hidden bg-white">
                 {/* Global Search */}
                 <div className="p-4 border-b">

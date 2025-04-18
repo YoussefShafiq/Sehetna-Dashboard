@@ -1,7 +1,8 @@
+import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const HomeProvidersTable = ({ providers }) => {
+const HomeProvidersTable = ({ providers, loading }) => {
     // Simulated data array for providers
 
 
@@ -35,25 +36,37 @@ const HomeProvidersTable = ({ providers }) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {providers?.recent?.map((provider, index) => (
-                            <tr key={index}>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {provider.first_name} {provider.last_name}
-                                </td>
-                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div className={`px-2 text-xs leading-5 font-semibold rounded-full text-center w-fit
-                                        ${provider.type === 'individual' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
-                                        {provider.type}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-md
-                                        ${provider.status === 'Active' ? 'bg-[#009379] ' : 'bg-[#930002] '}text-white`}>
-                                        {provider.status}
+                        {loading ? (
+                            <tr>
+                                <td colSpan="3" className="px-3 py-4 text-center">
+                                    <div className="flex justify-center items-center gap-2">
+                                        <Loader2 className="animate-spin" size={18} />
+                                        Loading providers...
                                     </div>
                                 </td>
                             </tr>
-                        ))}
+                        ) : <>
+
+                            {providers?.recent?.map((provider, index) => (
+                                <tr key={index}>
+                                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        {provider.first_name} {provider.last_name}
+                                    </td>
+                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <div className={`px-2 text-xs leading-5 font-semibold rounded-full text-center w-fit
+                                        ${provider.type === 'individual' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}>
+                                            {provider.type}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-md
+                                        ${provider.status === 'Active' ? 'bg-[#009379] ' : 'bg-[#930002] '}text-white`}>
+                                            {provider.status}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </>}
                     </tbody>
                 </table>
             </div>

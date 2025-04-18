@@ -45,33 +45,43 @@ export default function Users() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Users Management</h1>
-      <div className="flex items-center gap-5 p-5 bg-white mb-5 w-fit m-auto rounded-2xl shadow-lg">
-        {/*  */}
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500">
-            <Users2Icon />
+      <div className="flex flex-row items-center justify-center md:gap-5 p-5 bg-white mb-5 w-full md:w-fit m-auto rounded-2xl shadow-lg overflow-x-auto">
+        {/* Total Users Card */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full md:w-auto">
+          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500">
+            <Users2Icon size={20} />
           </div>
-          <div className="flex flex-col ">
-            <span className="text-sm ">Total Users</span>
-            <span className='text-lg font-bold'>{usersData?.data?.data?.length}</span>
-          </div>
-        </div>
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500">
-            <Users2Icon />
-          </div>
-          <div className="flex flex-col ">
-            <span className="text-sm ">Total Users</span>
-            <span className='text-lg font-bold'>{usersData?.data?.data?.length}</span>
+          <div className="flex flex-col items-center justify-center text-center">
+            <span className="text-sm capitalize">Total Users</span>
+            <span className="text-lg font-bold">
+              {usersData?.data?.data?.length || 0}
+            </span>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-3">
+
+        {/* Active Users Card */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full md:w-auto">
           <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500">
-            <Users2Icon />
+            <Users2Icon size={20} />
           </div>
-          <div className="flex flex-col ">
-            <span className="text-sm ">Total Users</span>
-            <span className='text-lg font-bold'>{usersData?.data?.data?.length}</span>
+          <div className="flex flex-col items-center justify-center text-center">
+            <span className="text-sm capitalize">Active Users</span>
+            <span className="text-lg font-bold">
+              {usersData?.data?.data?.filter(user => user.status === 'active').length || 0}
+            </span>
+          </div>
+        </div>
+
+        {/* Inactive Users Card */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full md:w-auto">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-500">
+            <Users2Icon size={20} />
+          </div>
+          <div className="flex flex-col items-center justify-center text-center">
+            <span className="text-sm capitalize">Inactive Users</span>
+            <span className="text-lg font-bold">
+              {usersData?.data?.data?.filter(user => user.status === 'de-active').length || 0}
+            </span>
           </div>
         </div>
       </div>

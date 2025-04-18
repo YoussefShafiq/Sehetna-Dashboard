@@ -8,10 +8,10 @@ export default function Layout() {
 
     return <>
         <div className="flex bg-base min-h-screen">
-            <div className={`${sidebarOpen ? 'w-56' : 'w-0'} transition-all duration-500`}>
+            <div className={`${sidebarOpen ? 'md:w-56' : 'w-0'} transition-all duration-500`}>
                 <Sidebar />
             </div>
-            <div className={`${sidebarOpen ? 'w-[calc(100%-224px)] ps-0' : 'w-full'} p-5  text-black transition-all duration-500`}>
+            <div className={`${sidebarOpen ? 'w-full md:w-[calc(100%-224px)] ps-0' : 'w-full'} md:p-5  text-black transition-all duration-500`}>
                 <Outlet />
             </div>
         </div>
