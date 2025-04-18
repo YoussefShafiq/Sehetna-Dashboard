@@ -33,7 +33,7 @@ export default function Sidebar() {
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
 
     return <>
-        <div className={`h-full p-5 fixed w-56 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500`}>
+        <div className={`h-full p-5 fixed w-56 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500 z-50`}>
             <div className={`absolute top-0 right-0 ${sidebarOpen ? '-translate-x-full ' : 'translate-x-[calc(100%+5px)] p-1.5 flex justify-center items-center bg-white bg-opacity-60 aspect-square rounded-full'} translate-y-full transition-all duration-500`}>
                 <button onClick={toggleSidebar} ><SidebarClose /></button>
             </div>
