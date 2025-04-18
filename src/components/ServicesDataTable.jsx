@@ -7,6 +7,7 @@ import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 export default function ServicesDataTable({ services, loading, refetch, categories }) {
     const [filters, setFilters] = useState({
@@ -88,7 +89,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                 type: 'input'
             });
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -112,7 +118,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             fetchRequirements(selectedService); // Then update requirements from fresh services data
             setShowEditRequirementModal(false);
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -136,7 +147,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             await refetch(); // Wait for services to be refetched
             fetchRequirements(selectedService); // Then update requirements from fresh services data
         } catch (error) {
-            toast.error("Failed to delete requirement", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -172,7 +188,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             toast.success("Service status updated", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setTogglingServiceId(null);
         }
@@ -201,7 +222,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             toast.success("Service deleted successfully", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error("Failed to delete service", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setDeletingServiceId(null);
             setServiceToDelete(null);
@@ -293,7 +319,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             refetch();
         } catch (error) {
             setIsAdding(false);
-            toast.error("Failed to add service", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -335,7 +366,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             refetch();
         } catch (error) {
             setIsEditing(false);
-            toast.error(error.response.data.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 

@@ -18,6 +18,12 @@ export default function Complaints() {
     const { data: ComplaintsData, isLoading: isComplaintsLoading, isError: isComplaintsError, refetch } = useQuery({
         queryKey: ['ComplaintsData'],
         queryFn: getComplaintsData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     return (

@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader2, X, Edit, ChevronRight, ChevronLeft, FileText, CheckCircle, XCircle } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 function ProviderDocumentsModal({ provider, onClose, refetch }) {
     const [approvingDocId, setApprovingDocId] = useState(null);
@@ -30,7 +31,12 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
             refetch(); // Refetch data to update the UI
             onClose(); // Close the modal after successful action
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to approve document", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setApprovingDocId(null);
         }
@@ -58,7 +64,12 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
             refetch(); // Refetch data to update the UI
             onClose(); // Close the modal after successful action
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to reject document", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setRejectingDocId(null);
             setRejectionReason('');
@@ -268,7 +279,12 @@ function ProviderTable({ providers, loading, title, refetch }) {
             toast.success(`Provider ${newStatus}d successfully`, { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to update provider status", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setTogglingProviderId(null);
         }

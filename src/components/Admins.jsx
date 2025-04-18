@@ -18,6 +18,12 @@ export default function Admins() {
     const { data: AdminsData, isLoading: isAdminsLoading, isError: isAdminsError, refetch } = useQuery({
         queryKey: ['AdminsData'],
         queryFn: getAdminsData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     return (

@@ -41,6 +41,12 @@ export default function Campaigns() {
     const { data: CampaignsData, isLoading: isCampaignsLoading, isError: isCampaignsError, refetch } = useQuery({
         queryKey: ['CampaignsData'],
         queryFn: getCampaignsData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     const handleFilterChange = (field, value) => {
@@ -81,8 +87,12 @@ export default function Campaigns() {
             });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to create campaign", { duration: 3000 });
-        } finally {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }        } finally {
             setIsCreating(false);
         }
     };

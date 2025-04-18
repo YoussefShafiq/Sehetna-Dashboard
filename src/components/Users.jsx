@@ -3,6 +3,7 @@ import axios from 'axios';
 import UsersDataTable from './UsersDataTable';
 import { useQuery } from 'react-query';
 import { Users2Icon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Users() {
   function getUsersData() {
@@ -19,6 +20,10 @@ export default function Users() {
   const { data: usersData, isLoading: isUsersLoading, isError: isUsersError, refetch } = useQuery({
     queryKey: ['usersData'],
     queryFn: getUsersData,
+    onError: (error) => {
+      localStorage.removeItem('userToken')
+      navigate('/login')
+    }
   })
 
   const handleStatusToggle = async (userId) => {
@@ -34,7 +39,12 @@ export default function Users() {
       );
       refetch();
     } catch (error) {
-      console.error('Error toggling user status:', error);
+      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      const navigate = useNavigate();
+      if (error.response.status === 401) {
+        localStorage.removeItem('userToken')
+        navigate('/login')
+      }
     }
   };
 

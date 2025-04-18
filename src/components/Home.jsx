@@ -23,6 +23,10 @@ export default function Home() {
   const { data: homeData, isLoading: isHomeLoading, isError: isHomeError } = useQuery({
     queryKey: ['homeData'],
     queryFn: getHomeData,
+    onError:(error) => {
+      localStorage.removeItem('userToken')
+      navigate('/login')
+    }
   })
 
   const navigate = useNavigate();

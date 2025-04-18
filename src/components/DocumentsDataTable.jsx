@@ -7,6 +7,7 @@ import { Check, Loader2, Plus, Trash2, X, Edit, ChevronRight, ChevronLeft } from
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 export default function DocumentsDataTable({ documents, loading, refetch }) {
     const [filters, setFilters] = useState({
@@ -68,7 +69,12 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingDocument(false);
-            toast.error(error.response?.data?.message || "Failed to add document", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -92,7 +98,12 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingDocument(false);
-            toast.error(error.response?.data?.message || "Failed to update document", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -119,7 +130,12 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
             toast.success("Document deleted successfully", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error("Failed to delete document", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setDeletingDocId(null);
             setDocumentToDelete(null);

@@ -17,15 +17,20 @@ export default function Sidebar() {
         setloggingOut(true)
         try {
             let resopnse = await axios.post('https://api.sehtnaa.com/api/auth/logout', {}, { headers: { Authorization: `Bearer ${localStorage.getItem('userToken')}` } })
-            localStorage.removeItem('userToken')
-            navigate('/login')
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
             toast.success('logged out successfully', { duration: 2000 })
             setloggingOut(false)
         } catch (error) {
-            toast.error(error.response.data.message, { duration: 5000 })
             setloggingOut(false)
-            localStorage.removeItem('userToken')
-            navigate('/login')
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     }
 

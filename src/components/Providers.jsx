@@ -18,6 +18,10 @@ export default function Providers() {
   const { data: ProvidersData, isLoading: isProvidersLoading, isError: isProvidersError, refetch } = useQuery({
     queryKey: ['ProvidersData'],
     queryFn: getProvidersData,
+    onError: (error) => {
+      localStorage.removeItem('userToken')
+      navigate('/login')
+    }
   });
 
   useEffect(() => {

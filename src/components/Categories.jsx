@@ -18,6 +18,12 @@ export default function Categories() {
     const { data: categoriesData, isLoading: isCategoriesLoading, isError: isCategoriesError, refetch } = useQuery({
         queryKey: ['CategoriesData'],
         queryFn: getCategoriesData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     return (

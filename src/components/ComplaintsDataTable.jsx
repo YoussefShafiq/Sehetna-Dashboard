@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader2, X, Edit, ChevronRight, ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function ComplaintsDataTable({ complaints, loading, refetch }) {
     const [filters, setFilters] = useState({
@@ -69,7 +70,12 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
             setShowDetailsModal(false);
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to update complaint", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setUpdatingComplaintId(null);
         }

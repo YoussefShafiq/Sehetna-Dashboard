@@ -19,6 +19,12 @@ export default function Services() {
     const { data: categoriesData, isLoading: isCategoriesLoading, isError: isCategoriesError } = useQuery({
         queryKey: ['CategoriesData'],
         queryFn: getCategoriesData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     function getServicesData() {
@@ -35,6 +41,12 @@ export default function Services() {
     const { data: servicesData, isLoading: isServicesLoading, isError: isServicesError, refetch } = useQuery({
         queryKey: ['ServicesData'],
         queryFn: getServicesData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     return (

@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight, ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function CategoriesDataTable({ categories, loading, refetch }) {
     const [filters, setFilters] = useState({
@@ -58,7 +59,12 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             toast.success("Category status updated", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to update status", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setTogglingCategoryId(null);
         }
@@ -87,7 +93,12 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             toast.success("Category deleted successfully", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error("Failed to delete category", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setDeletingCategoryId(null);
             setCategoryToDelete(null);
@@ -166,7 +177,12 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingCategory(false);
-            toast.error("Failed to add category", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -205,8 +221,12 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingCategory(false);
-            toast.error(error.response?.data?.message || "Failed to update category", { duration: 3000 });
-        }
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }        }
     };
 
     const resetForm = () => {

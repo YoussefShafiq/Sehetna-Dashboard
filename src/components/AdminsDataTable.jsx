@@ -6,6 +6,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader2, Plus, Trash2, X, Edit, ChevronRight, ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminsDataTable({ admins, loading, refetch }) {
     const [filters, setFilters] = useState({
@@ -60,7 +61,12 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             toast.success(`Admin ${currentStatus === 'active' ? 'deactivated' : 'activated'}`, { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Failed to update status", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setTogglingAdminEmail(null);
         }
@@ -92,7 +98,12 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             toast.success("Admin deleted successfully", { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message, { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setDeletingAdminEmail(null);
             setAdminToDelete(null);
@@ -157,7 +168,12 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingAdmin(false);
-            toast.error(error.response?.data?.message || "Failed to add admin", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 
@@ -187,7 +203,12 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             refetch();
         } catch (error) {
             setUpdatingAdmin(false);
-            toast.error(error.response?.data?.message || "Failed to update admin", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         }
     };
 

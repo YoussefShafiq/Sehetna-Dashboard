@@ -32,6 +32,12 @@ export default function Requests() {
     const { data: RequestsData, isLoading: isRequestsLoading, isError: isRequestsError, refetch } = useQuery({
         queryKey: ['RequestsData'],
         queryFn: getRequestsData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     const handleFilterChange = (field, value) => {

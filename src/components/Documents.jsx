@@ -18,6 +18,12 @@ export default function Documents() {
     const { data: DocumentsData, isLoading: isDocumentsLoading, isError: isDocumentsError, refetch } = useQuery({
         queryKey: ['DocumentsData'],
         queryFn: getDocumentsData,
+        onError: (error) => {
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
+        }
     });
 
     return (

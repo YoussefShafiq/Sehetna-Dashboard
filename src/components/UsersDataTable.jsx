@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import toast from 'react-hot-toast';
 import { Tooltip } from '@heroui/tooltip';
 import { Check, Loader, Loader2, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function UsersDataTable({ users, loading, onStatusToggle }) {
     const [filters, setFilters] = useState({
@@ -33,7 +34,12 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
             await onStatusToggle(userId);
             toast.success("User status updated", { duration: 2000 });
         } catch (error) {
-            toast.error("Failed to update status", { duration: 3000 });
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            const navigate = useNavigate();
+            if (error.response.status === 401) {
+                localStorage.removeItem('userToken')
+                navigate('/login')
+            }
         } finally {
             setTogglingUserId(null);
         }
