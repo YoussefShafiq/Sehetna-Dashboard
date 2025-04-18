@@ -102,7 +102,6 @@ A comprehensive admin dashboard for managing all aspects of the Sehtnaa platform
 - **Routing**: React Router
 - **Icons**: Lucide React
 - **Forms**: Formik (if used)
-- **Tables**: PrimeReact DataTable
 - **Authentication**: JWT
 
 ## Installation
