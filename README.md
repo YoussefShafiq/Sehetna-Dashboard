@@ -108,5 +108,5 @@ A comprehensive admin dashboard for managing all aspects of the Sehtnaa platform
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/sehtnaa-admin.git
+   git clone https://github.com/YoussefShafiq/Sehetna-Dashboard.git
    cd sehtnaa-admin

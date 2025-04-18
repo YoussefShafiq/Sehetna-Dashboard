@@ -25,7 +25,6 @@ export default function Providers() {
   });
 
   useEffect(() => {
-    console.log(ProvidersData?.data?.data);
 
   }, [ProvidersData])
 

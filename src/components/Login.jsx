@@ -21,7 +21,6 @@ export default function Login() {
             setError('')
             let { data } = await axios.post('https://api.sehtnaa.com/api/auth/login', values)
             setloading(false)
-            console.log(data);
             toast.success('logged in successfully', {
                 duration: 2000,
             })
@@ -35,7 +34,6 @@ export default function Login() {
                 duration: 5000,
             })
             setloading(false)
-            console.log(error.response.data.message);
             setError(error.response.data.message)
         }
     }
