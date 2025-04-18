@@ -18,13 +18,14 @@ import Documents from './components/Documents';
 import Complaints from './components/Complaints';
 import Requests from './components/Requests';
 import Campaigns from './components/Campaigns';
+import ErrorPage from './components/ErrorPage';
 
 function App() {
 
   const routers = createBrowserRouter([
     { path: 'login', element: <GoHome> <Login /> </GoHome> },
     {
-      path: '', element: <Layout />, children: [
+      path: '', element: <Layout />, errorElement: <ErrorPage />, children: [
         { index: true, element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'home', element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'users', element: <ProtectedRoute> <Users /> </ProtectedRoute> },

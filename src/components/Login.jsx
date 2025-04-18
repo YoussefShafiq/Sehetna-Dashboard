@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import image from '../assets/images/Work time-pana (1).svg'
+import image from '../assets/images/Secure login-amico.svg'
 import logo from '../assets/images/Sehetna 1.png'
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Formik, useFormik } from 'formik'
@@ -64,12 +64,12 @@ export default function Login() {
 
             <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 h-[90%] w-[90%] bg-[#ffffffc0] dark:bg-dark1 dark:bg-opacity-20 transition-colors duration-300 dark:text-white backdrop-blur-md rounded-lg shadow-xl " >
                 <div className="container m-auto flex lg:flex-row flex-col items-center lg:items-stretch h-full" >
-                    <div className="hidden lg:block w-2/3 lg:w-1/2 h ">
-                        <img src={image} className='w-full' alt="illustration for sand clock and man working on laptop" />
+                    <div className="hidden lg:flex w-2/3 lg:w-1/2 h-full  justify-center items-center ">
+                        <img src={image} className='w-5/6' alt="illustration for sand clock and man working on laptop" />
                     </div>
 
-                    <div className="w-full p-5 lg:p-0 lg:w-1/2 flex flex-col items-center justify-center overflow-y-scroll" style={{ scrollbarWidth: 'none' }}>
-                        <div className='w-1/4 lg:w-1/6 pt-10 dark:hidden' ><img src={logo} className='w-full max-w-full object-contain' alt="BrainMate" /></div>
+                    <div className="h-full w-full p-5 lg:p-0 lg:w-1/2 flex flex-col items-center justify-center overflow-y-scroll" style={{ scrollbarWidth: 'none' }}>
+                        <div className='w-1/4 lg:w-2/6 pt-10' ><img src={logo} className='w-full max-w-full object-contain' alt="sehetna" /></div>
                         <h1 className='text-5xl font-bold text-center text-black' >Welcome Back!</h1>
                         <h2 className='text-primary text-sm' >Login for your dashboard.</h2>
                         <form onSubmit={formik.handleSubmit} className="w-full max-w-sm my-5">
