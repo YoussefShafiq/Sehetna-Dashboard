@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import image from '../assets/images/Secure login-amico.svg'
-import logo from '../assets/images/Sehetna 1.png'
+import logo from '../assets/images/sehetna.png'
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { Formik, useFormik } from 'formik'
 import axios from 'axios'
@@ -60,7 +60,7 @@ export default function Login() {
     return <>
         <div className="h-screen bg-base dark:bg-dark overflow-hidden relative transition-colors duration-300">
 
-            <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 h-[90%] w-[90%] bg-[#ffffffc0] dark:bg-dark1 dark:bg-opacity-20 transition-colors duration-300 dark:text-white backdrop-blur-md rounded-lg shadow-xl " >
+            <div className="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 h-[90%] w-[90%] bg-[#ffffff] transition-colors duration-300 dark:text-white backdrop-blur-md rounded-lg shadow-xl " >
                 <div className="container m-auto flex lg:flex-row flex-col items-center lg:items-stretch h-full" >
                     <div className="hidden lg:flex w-2/3 lg:w-1/2 h-full  justify-center items-center ">
                         <img src={image} className='w-5/6' alt="illustration for sand clock and man working on laptop" />

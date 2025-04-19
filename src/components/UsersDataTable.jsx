@@ -74,7 +74,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
             ? 'bg-[#009379] text-white'
             : 'bg-[#930002] text-white';
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {status}
             </span>
         );

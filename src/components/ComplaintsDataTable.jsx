@@ -182,7 +182,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
                     placeholder="Search complaints..."
-                    className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full border border-primary"
+                    className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
             </div>
 
@@ -397,7 +397,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                             });
                                             setShowUpdateModal(true);
                                         }}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
                                         Update Status
                                     </button>
@@ -465,7 +465,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                     <button
                                         type="submit"
                                         disabled={updatingComplaintId === selectedComplaint.id}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
                                         {updatingComplaintId === selectedComplaint.id ? (
                                             <Loader2 className="animate-spin mx-auto" size={18} />

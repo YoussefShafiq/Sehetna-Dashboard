@@ -13,7 +13,7 @@ export default function HomeServicesCard({ services, loading }) {
     };
 
     return <>
-        <div className="bg-white rounded-2xl p-5 pb-0 max-h-[35vh] overflow-y-auto">
+        <div className="bg-white rounded-2xl p-5 pb-0 max-h-[40vh] overflow-y-auto">
             <div className="flex items-center justify-between">
                 <h2 className='capitalize font-semibold text-xl text-black'>Services</h2>
                 <button onClick={handleViewAllServices} className="text-green-500">view all</button>

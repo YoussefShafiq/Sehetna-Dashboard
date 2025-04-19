@@ -53,23 +53,23 @@ export default function Requests() {
         const customerName = `${request.customer?.first_name || ''} ${request.customer?.last_name || ''}`.toLowerCase();
         const providerName = `${request.assigned_provider?.first_name || ''} ${request.assigned_provider?.last_name || ''}`.toLowerCase();
         const serviceName = request.service?.name?.en?.toLowerCase() || '';
-        const requestStatus = request.status.toLowerCase();
+        const requestStatus = request.status?.toLowerCase();
         const requestDate = new Date(request.created_at).toLocaleDateString();
-        const requestAddress = request.address.toLowerCase();
+        const requestAddress = request.address?.toLowerCase();
 
         return (
             (filters.global === '' ||
-                customerName.includes(filters.global.toLowerCase()) ||
-                serviceName.includes(filters.global.toLowerCase()) ||
-                providerName.includes(filters.global.toLowerCase()) ||
-                requestStatus.includes(filters.global.toLowerCase()) ||
-                requestAddress.includes(filters.global.toLowerCase())) &&
-            (filters.customer === '' || customerName.includes(filters.customer.toLowerCase())) &&
-            (filters.service === '' || serviceName.includes(filters.service.toLowerCase())) &&
-            (filters.provider === '' || providerName.includes(filters.provider.toLowerCase())) &&
-            (filters.status === '' || requestStatus.includes(filters.status.toLowerCase())) &&
+                customerName.includes(filters.global?.toLowerCase()) ||
+                serviceName.includes(filters.global?.toLowerCase()) ||
+                providerName.includes(filters.global?.toLowerCase()) ||
+                requestStatus.includes(filters.global?.toLowerCase()) ||
+                requestAddress.includes(filters.global?.toLowerCase())) &&
+            (filters.customer === '' || customerName.includes(filters.customer?.toLowerCase())) &&
+            (filters.service === '' || serviceName.includes(filters.service?.toLowerCase())) &&
+            (filters.provider === '' || providerName.includes(filters.provider?.toLowerCase())) &&
+            (filters.status === '' || requestStatus.includes(filters.status?.toLowerCase())) &&
             (filters.date === '' || requestDate.includes(filters.date)) &&
-            (filters.address === '' || requestAddress.includes(filters.address.toLowerCase()))  // Add this for dedicated address filter
+            (filters.address === '' || requestAddress.includes(filters.address?.toLowerCase()))  // Add this for dedicated address filter
         );
     }) || [];
 
@@ -86,21 +86,21 @@ export default function Requests() {
             case 'pending':
                 statusClass = 'bg-yellow-500 text-white';
                 break;
-            case 'completed':
+            case 'accepted':
                 statusClass = 'bg-green-500 text-white';
                 break;
             case 'cancelled':
-                statusClass = 'bg-red-500 text-white';
+                statusClass = 'bg-[#930002] text-white';
                 break;
-            case 'in_progress':
-                statusClass = 'bg-blue-500 text-white';
+            case 'completed':
+                statusClass = 'bg-[#009379] text-white';
                 break;
             default:
                 statusClass = 'bg-gray-500 text-white';
         }
 
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-24 text-center capitalize`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-24 text-center capitalize`}>
                 {status.replace('_', ' ')}
             </span>
         );

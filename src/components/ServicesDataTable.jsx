@@ -441,7 +441,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             ? 'bg-[#009379] text-white'
             : 'bg-[#930002] text-white';
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {isActive ? 'Active' : 'Inactive'}
             </span>
         );
@@ -508,13 +508,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     icon={<Plus size={18} />}
                     label="Add Service"
                     onClick={() => setShowAddModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
+                    className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="w-full divide-y divide-gray-200">
+            <div className="overflow-x-auto ">
+                <table className="w-full divide-y divide-gray-200 ">
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -869,7 +869,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 "
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all  "
                                         disabled={isAdding}
                                     >
                                         {isAdding ? <><Loader2 className="animate-spin" size={18} /></> : 'Add Service'}
@@ -1085,7 +1085,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={isEditing}
                                     >
                                         {isEditing ? <><Loader2 className="animate-spin" size={18} /></> : 'Update'}
@@ -1172,7 +1172,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         icon={<Plus size={18} />}
                                         label="Add Requirement"
                                         onClick={() => setShowAddRequirementModal(true)}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
+                                        className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                                     />
                                     <Button
                                         icon={<X size={18} />}
@@ -1318,7 +1318,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
                                         Add Requirement
                                     </button>
@@ -1411,7 +1411,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
                                         Update Requirement
                                     </button>

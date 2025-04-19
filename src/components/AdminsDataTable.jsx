@@ -264,7 +264,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             ? 'bg-[#009379] text-white'
             : 'bg-[#930002] text-white';
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {status === 'active' ? 'Active' : 'Inactive'}
             </span>
         );
@@ -274,10 +274,10 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
         const roleClass = role === 'super_admin'
             ? 'bg-purple-600 text-white'
             : role === 'admin'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-primary text-white'
                 : 'bg-green-600 text-white';
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${roleClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${roleClass} min-w-16 text-center`}>
                 {role === 'super_admin' ? 'Super Admin' : role === 'admin' ? 'Admin' : 'Mod'}
             </span>
         );
@@ -324,13 +324,13 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
                     placeholder="Search admins..."
-                    className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full border border-primary"
+                    className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
                 <Button
                     icon={<Plus size={18} />}
                     label="Add Admin"
                     onClick={() => setShowAddModal(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
+                    className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
             </div>
 
@@ -596,7 +596,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingAdmin}
                                     >
                                         {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'add Admin'}
@@ -728,7 +728,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingAdmin}
                                     >
                                         {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Admin'}

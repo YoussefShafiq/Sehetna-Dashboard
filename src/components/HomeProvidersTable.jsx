@@ -18,7 +18,7 @@ const HomeProvidersTable = ({ providers, loading }) => {
                 <h2 className="text-xl font-semibold text-black">Providers</h2>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-h-[30vh]">
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                         <tr>

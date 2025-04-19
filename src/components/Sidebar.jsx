@@ -34,15 +34,15 @@ export default function Sidebar() {
 
     return <>
         <div className={`h-full p-5 fixed w-56 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-all duration-500 z-50`}>
-            <div className={`absolute top-0 right-0 ${sidebarOpen ? '-translate-x-full ' : 'translate-x-[calc(100%+5px)] p-1.5 flex justify-center items-center bg-white bg-opacity-60 aspect-square rounded-full'} translate-y-full transition-all duration-500`}>
+            <div className={`absolute z-50  ${sidebarOpen ? 'top-5 right-5 -translate-x-1/2 translate-y-1/2 text-gray-400' : 'top-2 -right-2 translate-x-full p-1.5 flex justify-center items-center bg-white text-gray-700 bg-opacity-90 aspect-square rounded-full cursor-pointer'}  transition-all duration-500`}>
                 <button onClick={toggleSidebar} ><SidebarClose /></button>
             </div>
-            <div className="h-full bg-white rounded-2xl p-5 flex flex-col justify-between overflow-y-auto">
+            <div className="h-full bg-white rounded-2xl p-5 pt-10 flex flex-col justify-between overflow-y-auto">
                 <div className="">
-                    <div className="flex justify-center items-center overflow-hidden mb-5">
+                    <div className="flex justify-center items-center overflow-hidden mb-2">
                         <img src={logo} alt="Logo" className="w-4/5" />
                     </div>
-                    <div className="flex flex-col gap-2.5 text-gray-400 text-sm">
+                    <div className="flex flex-col gap-1.5 text-gray-400 text-sm">
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/" ><Home size={18} /> Home</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/users" ><User2Icon size={18} /> Users</NavLink>
                         <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/services" ><HandHeart size={18} /> Services</NavLink>
@@ -55,8 +55,8 @@ export default function Sidebar() {
                         {localStorage.getItem('role')?.toLowerCase() === 'super_admin' && <NavLink className="px-4 py-2 rounded-xl flex items-center gap-2" to="/admins" ><Shield size={18} /> Admins</NavLink>}
                     </div>
                 </div>
-                <div className="flex flex-col gap-3">
-                    <button onClick={handleLogout} disabled={loggingOut} className='bg-gray-400 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2 disabled:cursor-not-allowed disabled:opacity-50'>logout <LogOutIcon /></button>
+                <div className="flex flex-col">
+                    <button onClick={handleLogout} disabled={loggingOut} className='bg-gray-400 flex justify-center items-center text-white p-2 rounded-xl mb-2 gap-2 disabled:cursor-not-allowed disabled:opacity-50 capitalize'>logout <LogOutIcon size={16} /></button>
                     <div className="flex justify-center items-center">
                         <img src={copyrightimg} alt="Logo" className="w-5/6" />
                     </div>

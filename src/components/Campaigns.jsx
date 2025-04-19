@@ -92,7 +92,8 @@ export default function Campaigns() {
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
-            }        } finally {
+            }
+        } finally {
             setIsCreating(false);
         }
     };
@@ -123,7 +124,7 @@ export default function Campaigns() {
         const statusText = isSuccess ? 'Success' : 'Failed';
 
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {statusText}
             </span>
         );
@@ -177,13 +178,13 @@ export default function Campaigns() {
                         value={filters.global}
                         onChange={(e) => handleFilterChange('global', e.target.value)}
                         placeholder="Search campaigns..."
-                        className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full border border-primary"
+                        className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                     />
                     <Button
                         icon={<Plus size={18} />}
                         label="Create Campaign"
                         onClick={() => setShowAddModal(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-xl shadow-sm min-w-max"
+                        className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                     />
                 </div>
 
@@ -346,7 +347,7 @@ export default function Campaigns() {
                                         </button>
                                         <button
                                             type="submit"
-                                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                             disabled={isCreating}
                                         >
                                             {isCreating ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Create Campaign'}

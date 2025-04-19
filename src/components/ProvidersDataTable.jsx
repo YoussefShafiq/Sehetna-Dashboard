@@ -89,7 +89,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                 : 'bg-yellow-500 text-white';
 
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center capitalize`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center capitalize`}>
                 {status}
             </span>
         );
@@ -335,7 +335,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
             ? 'bg-[#009379] text-white'
             : 'bg-[#930002] text-white';
         return (
-            <span className={`flex justify-center w-fit items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
+            <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
                 {status}
             </span>
         );
@@ -385,7 +385,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                         value={filters.global}
                         onChange={(e) => handleFilterChange('global', e.target.value)}
                         placeholder={`Search ${title.toLowerCase()}...`}
-                        className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full border border-primary"
+                        className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                     />
                 </div>
 
