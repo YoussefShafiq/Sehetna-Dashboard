@@ -6,8 +6,10 @@ import { Button } from 'primereact/button';
 import { Loader2, Plus, ChevronRight, ChevronLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Campaigns() {
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         title: '',
@@ -42,7 +44,7 @@ export default function Campaigns() {
         queryKey: ['CampaignsData'],
         queryFn: getCampaignsData,
         onError: (error) => {
-            if (error.response.status === 401) {
+            if (error.response?.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
             }
@@ -87,9 +89,8 @@ export default function Campaigns() {
             });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
-            if (error.response.status === 401) {
+            toast.error(error.response?.data?.message || "Unexpected error", { duration: 3000 });
+            if (error.response?.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
             }
@@ -99,15 +100,14 @@ export default function Campaigns() {
     };
 
     // Filter campaigns based on filter criteria
-    const filteredCampaigns = CampaignsData?.data?.data?.filter(campaign => {
-        const campaignStatus = campaign.failed_count === '0' ? 'success' : 'failed';
+    const filteredCampaigns = CampaignsData?.data?.data?.filter((campaign) => {
         return (
             (filters.global === '' ||
                 campaign.title.toLowerCase().includes(filters.global.toLowerCase()) ||
                 campaign.body.toLowerCase().includes(filters.global.toLowerCase())) &&
             (filters.title === '' || campaign.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-            (filters.message === '' || campaign.body.toLowerCase().includes(filters.message.toLowerCase())) &&  // Add this line
-            (filters.status === '' || campaignStatus.includes(filters.status.toLowerCase()))
+            (filters.message === '' || campaign.body.toLowerCase().includes(filters.message.toLowerCase())) &&
+            (filters.status === '' || campaign.status.toLowerCase().includes(filters.status.toLowerCase()))
         );
     }) || [];
 
@@ -118,10 +118,13 @@ export default function Campaigns() {
         currentPage * rowsPerPage
     );
 
-    const statusBadge = (sent, failed) => {
-        const isSuccess = failed === '0';
-        const statusClass = isSuccess ? 'bg-green-500 text-white' : 'bg-red-500 text-white';
-        const statusText = isSuccess ? 'Success' : 'Failed';
+    const statusBadge = (status) => {
+        const statusClass = status === 'success' ? 'bg-green-500 text-white' :
+            status === 'failed' ? 'bg-red-500 text-white' :
+                'bg-yellow-500 text-white';
+        const statusText = status === 'success' ? 'Success' :
+            status === 'failed' ? 'Failed' :
+                'Queued';
 
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
@@ -257,13 +260,16 @@ export default function Campaigns() {
                                             </div>
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
-                                            {statusBadge(campaign.sent_count, campaign.failed_count)}
+                                            {statusBadge(campaign.status)}
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
                                             <div className="flex flex-col">
                                                 <span className="text-xs">Total: {campaign.total_notifications}</span>
                                                 <span className="text-xs text-green-500">Sent: {campaign.sent_count}</span>
                                                 <span className="text-xs text-red-500">Failed: {campaign.failed_count}</span>
+                                                {campaign.pending_count > 0 && (
+                                                    <span className="text-xs text-yellow-500">Pending: {campaign.pending_count}</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
