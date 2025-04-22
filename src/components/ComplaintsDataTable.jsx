@@ -354,6 +354,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                     <p className="whitespace-pre-line">{selectedComplaint.description}</p>
                                 </div>
 
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <h3 className="font-medium text-gray-700">Status</h3>
@@ -383,9 +384,17 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                     </div>
                                 </div>
 
-                                <div>
-                                    <h3 className="font-medium text-gray-700">Customer</h3>
-                                    <p>{selectedComplaint.user.first_name} {selectedComplaint.user.last_name}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <h3 className="font-medium text-gray-700">Customer</h3>
+                                        <p>{selectedComplaint.user.first_name} {selectedComplaint.user.last_name}</p>
+                                    </div>
+
+
+                                    <div>
+                                        <h3 className="font-medium text-gray-700">complained at:</h3>
+                                        <p className="whitespace-pre-line">{selectedComplaint.created_at.substring(0, 10)}</p>
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-end gap-3 mt-6">

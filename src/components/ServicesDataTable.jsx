@@ -760,8 +760,8 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             required
                                         >
                                             <option value="individual">Individual</option>
-                                            <option value="organizationalal">Organizatialonalal</option>
-                                            al                                      </select>
+                                            <option value="organizational">Organizational</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
