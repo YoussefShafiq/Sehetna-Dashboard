@@ -9,6 +9,8 @@ export default {
       colors: {
         primary: '#3499c5',  // light navy
         base: '#e5ebee',  // light
+        secondary: "#009379",
+        secondary_dark: "#266d60",
 
 
       },

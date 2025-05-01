@@ -25,7 +25,7 @@ function App() {
   const routers = createBrowserRouter([
     { path: 'login', element: <GoHome> <Login /> </GoHome> },
     {
-      path: '', element: <Layout />, errorElement: <ErrorPage />, children: [
+      path: '', element: <Layout />, children: [
         { index: true, element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'home', element: <ProtectedRoute> <Home /> </ProtectedRoute> },
         { path: 'users', element: <ProtectedRoute> <Users /> </ProtectedRoute> },

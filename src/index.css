@@ -25,3 +25,7 @@
 * {
     scroll-behavior: smooth;
 }
+
+:root {
+    @apply bg-base
+}
