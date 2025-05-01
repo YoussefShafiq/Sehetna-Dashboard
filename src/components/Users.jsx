@@ -15,6 +15,7 @@ export default function Users() {
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     endDate: new Date()
   });
+  const [exportingData, setExportingData] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,7 +33,40 @@ export default function Users() {
   const { data: usersData, isLoading: isUsersLoading, isError: isUsersError, refetch } = useQuery({
     queryKey: ['usersData'],
     queryFn: getUsersData,
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      if (error.response?.status === 401) {
+        localStorage.removeItem('userToken');
+        navigate('/login');
+      }
+    }
   });
+
+  async function exportUsersData(url) {
+    setExportingData(true);
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`
+        },
+        params: {
+          start_date: dateRange.startDate.toISOString().split('T')[0],
+          end_date: dateRange.endDate.toISOString().split('T')[0]
+        },
+      })
+      console.log(response);
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      if (error.response?.status === 401) {
+        localStorage.removeItem('userToken');
+        navigate('/login');
+      }
+    } finally {
+      setExportingData(false);
+    }
+  }
 
   function getUsersAnalysisData() {
     return axios.get(
@@ -49,9 +83,16 @@ export default function Users() {
     );
   }
 
-  const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
+  const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching, error: analysisError } = useQuery({
     queryKey: ['UserAanalysisData', usersData],
     queryFn: getUsersAnalysisData,
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      if (error.response?.status === 401) {
+        localStorage.removeItem('userToken');
+        navigate('/login');
+      }
+    }
   });
 
   const handleDateChange = (range) => {
@@ -154,13 +195,15 @@ export default function Users() {
             >
               Search
             </button>
-            <butotn
-              onClick={() => { window.open(analysisData?.data?.data?.export_url, '_blank') }}
-              className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors cursor-pointer"
+            <button
+              onClick={() => {
+                exportUsersData(analysisData?.data?.data?.export_url);
+              }}
+              className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
               disabled={isAnalysisFetching}
             >
-              Export
-            </butotn>
+              {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+            </button>
 
           </div>
         </div>
@@ -168,7 +211,6 @@ export default function Users() {
           {/* Metric Cards Row */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <MetricCard
-              key={analysisData}
               title="Total Customers"
               value={analysisData?.data?.data?.summary?.total_customers}
               icon={<Users2Icon size={18} />}
@@ -177,7 +219,6 @@ export default function Users() {
               borderColor="border-blue-100"
             />
             <MetricCard
-              key={analysisData}
               title="Active Customers"
               value={analysisData?.data?.data?.summary?.active_customers}
               icon={<ActivityIcon size={18} />}
@@ -186,16 +227,14 @@ export default function Users() {
               borderColor="border-green-100"
             />
             <MetricCard
-              key={analysisData}
               title="Growth Rate"
-              value={`${analysisData?.data?.data?.summary?.growth_rate}%`}
+              value={`${analysisData?.data?.data?.summary?.growth_rate || 0}%`}
               icon={<TrendingUpIcon size={18} />}
               bgColor="bg-purple-50"
               textColor="text-purple-800"
               borderColor="border-purple-100"
             />
             <MetricCard
-              key={analysisData}
               title="Active Requesters"
               value={analysisData?.data?.data?.summary?.active_requesters}
               icon={<Users2Icon size={18} />}

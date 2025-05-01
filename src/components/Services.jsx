@@ -52,6 +52,7 @@ export default function Services() {
         queryKey: ['ServicesData'],
         queryFn: getServicesData,
         onError: (error) => {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -77,6 +78,13 @@ export default function Services() {
     const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
         queryKey: ['ServicesAnalysisData', servicesData],
         queryFn: getServicesAnalysisData,
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            if (error.response?.status === 401) {
+                localStorage.removeItem('userToken');
+                navigate('/login');
+            }
+        }
     });
 
     const handleDateChange = (range) => {
@@ -128,7 +136,6 @@ export default function Services() {
                     <div className="flex flex-col lg:flex-row gap-4">
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            key={analysisData}
                             title="Total Services"
                             value={analysisData?.data?.data?.summary?.total_services}
                             icon={<Users2Icon size={18} />}
@@ -138,7 +145,6 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            key={analysisData}
                             title="Active Services"
                             value={analysisData?.data?.data?.summary?.active_services}
                             icon={<ActivityIcon size={18} />}
@@ -148,9 +154,8 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            key={analysisData}
                             title="Growth Rate"
-                            value={`${analysisData?.data?.data?.summary?.growth_rate}%`}
+                            value={`${analysisData?.data?.data?.summary?.growth_rate || 0}%`}
                             icon={<TrendingUpIcon size={18} />}
                             bgColor="bg-purple-50"
                             textColor="text-purple-800"
@@ -158,7 +163,6 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            key={analysisData}
                             title="InActive Services"
                             value={analysisData?.data?.data?.summary?.inactive_services}
                             icon={<Users2Icon size={18} />}
