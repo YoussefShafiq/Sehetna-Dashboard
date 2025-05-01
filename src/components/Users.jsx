@@ -84,7 +84,7 @@ export default function Users() {
   }
 
   const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching, error: analysisError } = useQuery({
-    queryKey: ['UserAanalysisData', usersData],
+    queryKey: ['UserAanalysisData'],
     queryFn: getUsersAnalysisData,
     onError: (error) => {
       toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });

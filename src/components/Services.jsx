@@ -9,7 +9,7 @@ import PieChart from './Charts/PieChart';
 import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
 export default function Services() {
-
+    const [exportingData, setExportingData] = useState(false);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
         endDate: new Date()
@@ -59,6 +59,32 @@ export default function Services() {
             }
         }
     });
+
+    async function exportUsersData(url) {
+        setExportingData(true);
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                },
+                params: {
+                    start_date: dateRange.startDate.toISOString().split('T')[0],
+                    end_date: dateRange.endDate.toISOString().split('T')[0]
+                },
+            })
+            console.log(response);
+
+        } catch (error) {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            if (error.response?.status === 401) {
+                localStorage.removeItem('userToken');
+                navigate('/login');
+            }
+        } finally {
+            setExportingData(false);
+        }
+    }
 
     function getServicesAnalysisData() {
         return axios.get(
@@ -121,13 +147,15 @@ export default function Services() {
                         >
                             Search
                         </button>
-                        <butotn
-                            onClick={() => { window.open(analysisData?.data?.data?.export_url, '_blank') }}
-                            className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors cursor-pointer"
+                        <button
+                            onClick={() => {
+                                exportUsersData(analysisData?.data?.data?.export_url);
+                            }}
+                            className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
                             disabled={isAnalysisFetching}
                         >
-                            Export
-                        </butotn>
+                            {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+                        </button>
 
                     </div>
                 </div>
