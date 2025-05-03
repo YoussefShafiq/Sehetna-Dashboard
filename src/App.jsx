@@ -16,7 +16,7 @@ import Categories from './components/Categories';
 import Admins from './components/Admins';
 import Documents from './components/Documents';
 import Complaints from './components/Complaints';
-import Requests from './components/Requests';
+// import Requests from './components/Requests';
 import Campaigns from './components/Campaigns';
 import ErrorPage from './components/ErrorPage';
 
@@ -34,7 +34,7 @@ function App() {
         { path: 'providers', element: <ProtectedRoute> <Providers /> </ProtectedRoute> },
         { path: 'documents', element: <ProtectedRoute> <Documents /> </ProtectedRoute> },
         { path: 'complaints', element: <ProtectedRoute> <Complaints /> </ProtectedRoute> },
-        { path: 'requests', element: <ProtectedRoute> <Requests /> </ProtectedRoute> },
+        // { path: 'requests', element: <ProtectedRoute> <Requests /> </ProtectedRoute> },
         { path: 'campaigns', element: <ProtectedRoute> <Campaigns /> </ProtectedRoute> },
         { path: 'admins', element: <ProtectedRoute> <Admins /> </ProtectedRoute> },
         { path: '*', element: <Notfound /> },
