@@ -195,9 +195,27 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Request Response Analysis'
+                label='Accepted Request Analysis'
                 labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
-                dataPoints={analysisData?.data?.data?.charts?.top_performing_providers?.values}
+                dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.accepted}
+                isStacked={true}
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow w-full ">
+              <LineChart
+                key={analysisData}
+                label='Rejected Request Analysis'
+                labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
+                dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.rejected}
+                isStacked={true}
+              />
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow w-full ">
+              <LineChart
+                key={analysisData}
+                label='Pending Request Analysis'
+                labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
+                dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.pending}
                 isStacked={true}
               />
             </div>
@@ -206,11 +224,12 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Top Performing Providers'
+                label='Top Performing Providers (completed requests)'
                 labels={analysisData?.data?.data?.charts?.top_performing_providers?.labels}
-                dataPoints={analysisData?.data?.data?.charts?.top_performing_providers?.values}
+                dataPoints={analysisData?.data?.data?.charts?.top_performing_providers?.completed_requests}
               />
             </div>
+
           </div>
         </div>
       </div>

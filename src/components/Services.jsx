@@ -118,7 +118,6 @@ export default function Services() {
             startDate: addDays(range.startDate, 1),
             endDate: addDays(range.endDate, 1)
         });
-        console.log(dateRange);
 
     };
 
@@ -227,7 +226,7 @@ export default function Services() {
                         <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
-                                label='Top Services by Revenue'
+                                label='Top Services by Requests'
                                 labels={analysisData?.data?.data?.charts?.top_services_by_requests?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.top_services_by_requests?.values}
                             />

@@ -102,7 +102,6 @@ export default function Users() {
       startDate: addDays(range.startDate, 1),
       endDate: addDays(range.endDate, 1)
     });
-    console.log(dateRange);
 
   };
 
