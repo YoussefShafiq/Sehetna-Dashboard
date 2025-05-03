@@ -12,7 +12,7 @@ export default function Services() {
     const [exportingData, setExportingData] = useState(false);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-        endDate: new Date()
+        endDate: addDays(new Date(), 1)
     });
 
     function getCategoriesData() {
@@ -73,7 +73,7 @@ export default function Services() {
                     end_date: dateRange.endDate.toISOString().split('T')[0]
                 },
             })
-            console.log(response);
+            window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
         } catch (error) {
             toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -102,7 +102,7 @@ export default function Services() {
     }
 
     const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
-        queryKey: ['ServicesAnalysisData', servicesData],
+        queryKey: ['ServicesAnalysisData', dateRange, servicesData],
         queryFn: getServicesAnalysisData,
         onError: (error) => {
             toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -141,12 +141,6 @@ export default function Services() {
                     />
                     <div className="flex justify-center items-center gap-2">
                         {isAnalysisFetching && <Loader2 className='animate-spin text-primary' />}
-                        <button
-                            onClick={() => analysisRefetch()}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                        >
-                            Search
-                        </button>
                         <button
                             onClick={() => {
                                 exportUsersData(analysisData?.data?.data?.export_url);
@@ -202,7 +196,7 @@ export default function Services() {
 
                     <div className="flex flex-col lg:flex-row justify-center gap-5 overflow-hidden">
                         {/* Pie Chart */}
-                        <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4">
+                        <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
                             <PieChart
                                 key={analysisData}
                                 label="Provider Type Distribution"
@@ -212,7 +206,7 @@ export default function Services() {
                         </div>
 
                         {/* line Chart */}
-                        <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4">
+                        <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
                             <LineChart
                                 key={analysisData}
                                 label='Category Distribution'
@@ -222,18 +216,18 @@ export default function Services() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-5">
-                        <div className="bg-white p-4 rounded-lg shadow w-full">
+                        <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
                                 label='Top Services by Revenue'
                                 labels={analysisData?.data?.data?.charts?.top_services_by_revenue?.labels}
-                                dataPoints={analysisData?.data?.data?.charts?.category_distribution?.values}
+                                dataPoints={analysisData?.data?.data?.charts?.top_services_by_revenue?.values}
                             />
                         </div>
-                        <div className="bg-white p-4 rounded-lg shadow w-full">
+                        <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
-                                label='Top Services by Requests'
+                                label='Top Services by Revenue'
                                 labels={analysisData?.data?.data?.charts?.top_services_by_requests?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.top_services_by_requests?.values}
                             />

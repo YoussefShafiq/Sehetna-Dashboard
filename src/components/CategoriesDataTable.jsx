@@ -31,7 +31,8 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
         name: { en: '', ar: '' },
         description: { en: '', ar: '' },
         order: '',
-        is_active: true
+        is_active: true,
+        is_multiple: false
     });
     const [iconFile, setIconFile] = useState(null);
     const [iconPreview, setIconPreview] = useState('');
@@ -156,6 +157,8 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             formDataToSend.append('description[en]', formData.description.en);
             formDataToSend.append('description[ar]', formData.description.ar);
             formDataToSend.append('order', formData.order);
+            formDataToSend.append('is_multiple', formData.is_multiple ? 1 : 0);
+
 
             // Append file if it exists
             if (iconFile) formDataToSend.append('icon', iconFile);
@@ -199,6 +202,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             formDataToSend.append('description[ar]', formData.description.ar);
             formDataToSend.append('order', formData.order);
             formDataToSend.append('is_active', formData.is_active ? 1 : 0);
+            formDataToSend.append('is_multiple', formData.is_multiple ? 1 : 0);
             formDataToSend.append('_method', 'POST');
 
             // Append file if it exists
@@ -247,7 +251,8 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             name: category.name,
             description: category.description,
             order: category.order,
-            is_active: category.is_active
+            is_active: category.is_active,
+            is_multiple: category.is_multiple
         });
         // Reset file state
         setIconFile(null);
@@ -588,6 +593,19 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     </div>
                                 </div>
 
+                                <div className="flex items-center mb-4">
+                                    <input
+                                        type="checkbox"
+                                        name="is_multiple"
+                                        checked={formData.is_multiple}
+                                        onChange={handleFormChange}
+                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    />
+                                    <label className="ml-2 block text-sm text-gray-700">
+                                        Allow multiple selections
+                                    </label>
+                                </div>
+
                                 <div className="flex justify-end gap-3 mt-6">
                                     <button
                                         type="button"
@@ -726,7 +744,18 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         </div>
                                     </div>
                                 </div>
-
+                                <div className="flex items-center mb-4">
+                                    <input
+                                        type="checkbox"
+                                        name="is_multiple"
+                                        checked={formData.is_multiple}
+                                        onChange={handleFormChange}
+                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    />
+                                    <label className="ml-2 block text-sm text-gray-700">
+                                        Allow multiple selections
+                                    </label>
+                                </div>
                                 <div className="flex items-center mb-4">
                                     <input
                                         type="checkbox"

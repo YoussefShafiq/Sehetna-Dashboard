@@ -4,6 +4,13 @@ import { useQuery } from 'react-query';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import DateRangePicker from './DateRangePicker';
+import { ActivityIcon, Loader2 as Loader, TrendingUpIcon, Users2Icon } from 'lucide-react';
+import { addDays } from 'date-fns';
+import PieChart from './Charts/PieChart';
+import MetricCard from './Charts/MetricCard';
+import LineChart from './Charts/LineChart';
+import { GiReceiveMoney } from "react-icons/gi";
 
 export default function Requests() {
     const [filters, setFilters] = useState({
@@ -17,6 +24,11 @@ export default function Requests() {
     });
     const [currentPage, setCurrentPage] = useState(1);
     const [rowsPerPage] = useState(10);
+    const [exportingData, setExportingData] = useState(false);
+    const [dateRange, setDateRange] = useState({
+        startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        endDate: addDays(new Date(), 1)
+    });
 
     function getRequestsData() {
         return axios.get(
@@ -39,6 +51,67 @@ export default function Requests() {
             }
         }
     });
+
+    async function exportRequestsData(url) {
+        setExportingData(true);
+        try {
+            const response = await axios.get(url, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                },
+                params: {
+                    start_date: dateRange.startDate.toISOString().split('T')[0],
+                    end_date: dateRange.endDate.toISOString().split('T')[0]
+                },
+            })
+            window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
+
+        } catch (error) {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            if (error.response?.status === 401) {
+                localStorage.removeItem('userToken');
+                navigate('/login');
+            }
+        } finally {
+            setExportingData(false);
+        }
+    }
+
+
+    function getRequestsAnalysisData() {
+        return axios.get(
+            `https://api.sehtnaa.com/api/admin/analytics/requests`,
+            {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('userToken')}`
+                },
+                params: {
+                    start_date: dateRange.startDate.toISOString().split('T')[0],
+                    end_date: dateRange.endDate.toISOString().split('T')[0]
+                }
+            }
+        );
+    }
+
+    const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
+        queryKey: ['RequestsAnalysisData', dateRange],
+        queryFn: getRequestsAnalysisData,
+        onError: (error) => {
+            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            if (error.response?.status === 401) {
+                localStorage.removeItem('userToken');
+                navigate('/login');
+            }
+        }
+    });
+
+    const handleDateChange = (range) => {
+        setDateRange({
+            startDate: addDays(range.startDate, 1),
+            endDate: addDays(range.endDate, 1)
+        });
+    };
 
     const handleFilterChange = (field, value) => {
         setFilters(prev => ({
@@ -69,7 +142,7 @@ export default function Requests() {
             (filters.provider === '' || providerName.includes(filters.provider?.toLowerCase())) &&
             (filters.status === '' || requestStatus.includes(filters.status?.toLowerCase())) &&
             (filters.date === '' || requestDate.includes(filters.date)) &&
-            (filters.address === '' || requestAddress.includes(filters.address?.toLowerCase()))  // Add this for dedicated address filter
+            (filters.address === '' || requestAddress.includes(filters.address?.toLowerCase()))
         );
     }) || [];
 
@@ -145,8 +218,12 @@ export default function Requests() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Requests</h1>
-            <div className="shadow-2xl rounded-2xl overflow-hidden bg-white">
+            <h1 className="text-2xl font-bold mb-6 text-center">Requests Management</h1>
+
+
+
+            {/* Requests Table */}
+            <div className="shadow-2xl rounded-2xl overflow-hidden bg-white mt-6">
                 {/* Global Search */}
                 <div className="p-4 border-b">
                     <InputText
@@ -202,7 +279,7 @@ export default function Requests() {
                                     <input
                                         type="text"
                                         placeholder="Address"
-                                        value={filters.address}  // Add address to filters state
+                                        value={filters.address}
                                         onChange={(e) => handleFilterChange('address', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
                                     />
@@ -295,6 +372,105 @@ export default function Requests() {
 
                 {/* Pagination */}
                 {!isRequestsLoading && renderPagination()}
+            </div>
+
+            {/* Analytics Section */}
+            <div className="mt-7 flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <DateRangePicker
+                        onDateChange={handleDateChange}
+                        initialRange={dateRange}
+                    />
+                    <div className="flex justify-center items-center gap-2">
+                        {isAnalysisFetching && <Loader className='animate-spin text-primary' />}
+                        <button
+                            onClick={() => analysisRefetch()}
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                        >
+                            Search
+                        </button>
+                        <button
+                            onClick={() => {
+                                exportRequestsData(analysisData?.data?.data?.export_url);
+                            }}
+                            className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
+                            disabled={isAnalysisFetching}
+                        >
+                            {exportingData ? <Loader className='animate-spin text-white' /> : 'Export'}
+                        </button>
+                    </div>
+                </div>
+
+                {/* Metric Cards */}
+                <div className="flex flex-col lg:flex-row gap-4">
+                    <MetricCard
+                        className={`w-full lg:w-1/4`}
+                        title="Total Requests"
+                        value={analysisData?.data?.data?.summary?.total_requests}
+                        icon={<Users2Icon size={18} />}
+                        bgColor="bg-blue-50"
+                        textColor="text-blue-800"
+                        borderColor="border-blue-100"
+                    />
+                    <MetricCard
+                        className={`w-full lg:w-1/4`}
+                        title="Completion Rate"
+                        value={analysisData?.data?.data?.summary?.completion_rate}
+                        icon={<ActivityIcon size={18} />}
+                        bgColor="bg-green-50"
+                        textColor="text-green-800"
+                        borderColor="border-green-100"
+                    />
+                    <MetricCard
+                        className={`w-full lg:w-1/4`}
+                        title="Total Revenue"
+                        value={`${analysisData?.data?.data?.summary?.total_revenue || 0} EGP`}
+                        icon={<GiReceiveMoney size={18} />}
+                        bgColor="bg-purple-50"
+                        textColor="text-purple-800"
+                        borderColor="border-purple-100"
+                    />
+                    <MetricCard
+                        className={`w-full lg:w-1/4`}
+                        title="Cancellation Rate"
+                        value={analysisData?.data?.data?.summary?.cancellation_rate}
+                        icon={<Users2Icon size={18} />}
+                        bgColor="bg-orange-50"
+                        textColor="text-orange-800"
+                        borderColor="border-orange-100"
+                    />
+                </div>
+
+                {/* Charts */}
+                <div className="flex flex-col lg:flex-row justify-center gap-5 overflow-hidden">
+                    <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
+                        <PieChart
+                            key={analysisData}
+                            label="Request Status Distribution"
+                            labels={analysisData?.data?.data?.charts?.status_distribution?.labels}
+                            dataPoints={analysisData?.data?.data?.charts?.status_distribution?.values}
+                        />
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
+                        <LineChart
+                            key={analysisData}
+                            label='Request Trends'
+                            labels={analysisData?.data?.data?.charts?.request_trends?.labels}
+                            dataPoints={analysisData?.data?.data?.charts?.request_trends?.values}
+                        />
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-5">
+                    <div className="bg-white p-4 rounded-lg shadow w-full ">
+                        <LineChart
+                            key={analysisData}
+                            label='Top categories requested'
+                            labels={analysisData?.data?.data?.charts?.top_categories?.labels}
+                            dataPoints={analysisData?.data?.data?.charts?.top_categories?.values}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );

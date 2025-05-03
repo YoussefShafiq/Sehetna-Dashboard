@@ -70,6 +70,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
     const handleAddRequirement = async (e) => {
         e.preventDefault();
+
         try {
             await axios.post(
                 `https://api.sehtnaa.com/api/services/${selectedService.id}/requirements`,
@@ -286,6 +287,9 @@ export default function ServicesDataTable({ services, loading, refetch, categori
     const handleAddService = async (e) => {
         setIsAdding(true);
         e.preventDefault();
+        if (formData.provider_type === 'organizational') {
+            formData.price = null;
+        }
         try {
             const formDataToSend = new FormData();
 
@@ -331,6 +335,9 @@ export default function ServicesDataTable({ services, loading, refetch, categori
     const handleEditService = async (e) => {
         setIsEditing(true);
         e.preventDefault();
+        if (formData.provider_type === 'organizational') {
+            formData.price = null;
+        }
         try {
             const formDataToSend = new FormData();
 
@@ -770,10 +777,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             name="price"
                                             value={formData.price}
                                             onChange={handleFormChange}
-                                            className="w-full px-3 py-2 border rounded-md"
+                                            className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
                                             min="0"
                                             step="0.01"
                                             required
+                                            disabled={formData.provider_type === 'organizational'}
                                         />
                                     </div>
                                     <div>

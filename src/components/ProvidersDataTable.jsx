@@ -481,7 +481,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
 
-                                            {provider.user.status !== 'pending' && (
+                                            {provider.user.status !== ''  && (
                                                 <Tooltip
                                                     content={togglingProviderId === provider.id ? 'Updating...' :
                                                         provider.user.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -535,7 +535,6 @@ function ProviderTable({ providers, loading, title, refetch }) {
 export default function ProvidersDataTable({ providers, loading, refetch }) {
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Providers Management</h1>
 
             <ProviderTable
                 providers={providers?.individual || []}

@@ -11,17 +11,14 @@ export default function PieChart({
     backgroundColors = [
         '#bbe1ff',
         '#bdffd2',
-        '#3499c5', // Dark Teal-Blue
-        '#009379', // Teal
-
+        '#ffd6bb',
+        '#e8bbff',
     ],
-
     hoverColors = [
         '#a8cae5',
         '#94e1ac',
-        '#267192', // Brighter Teal
-        '#009379', // Slightly Brighter Dark Teal-Blue
-
+        '#e5c2a8',
+        '#d1a8e5',
     ],
     borderWidth = 0,
     label = '',
