@@ -12,6 +12,7 @@ import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
 import { GiReceiveMoney } from "react-icons/gi";
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export default function Requests() {
     const [filters, setFilters] = useState({
@@ -30,7 +31,7 @@ export default function Requests() {
         startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
         endDate: addDays(new Date(), 1)
     });
-
+    const navigate = useNavigate();
     function getRequestsData() {
         return axios.get(
             `https://api.sehtnaa.com/api/admin/requests`,
