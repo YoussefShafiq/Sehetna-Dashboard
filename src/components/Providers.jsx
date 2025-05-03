@@ -1,21 +1,19 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import ProvidersDataTable from './ProvidersDataTable';
 import DateRangePicker from './DateRangePicker';
 import { ActivityIcon, Loader2, TrendingUpIcon, Users2Icon } from 'lucide-react';
-import { addDays } from 'date-fns';
-import PieChart from './Charts/PieChart';
 import MetricCard from './Charts/MetricCard';
+import PieChart from './Charts/PieChart';
 import LineChart from './Charts/LineChart';
 
 export default function Providers() {
   const [exportingData, setExportingData] = useState(false);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-    endDate: addDays(new Date(), 1)
+    endDate: new Date()
   });
-
   function getProvidersData() {
     return axios.get(
       `https://api.sehtnaa.com/api/admin/providers`,
@@ -27,14 +25,12 @@ export default function Providers() {
     );
   }
 
-  const { data: providersData, isLoading: isProvidersLoading, isError: isProvidersError, refetch } = useQuery({
+  const { data: ProvidersData, isLoading: isProvidersLoading, isError: isProvidersError, refetch } = useQuery({
     queryKey: ['ProvidersData'],
     queryFn: getProvidersData,
     onError: (error) => {
-      if (error.response.status === 401) {
-        localStorage.removeItem('userToken')
-        navigate('/login')
-      }
+      localStorage.removeItem('userToken')
+      navigate('/login')
     }
   });
 
@@ -80,7 +76,7 @@ export default function Providers() {
   }
 
   const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
-    queryKey: ['ProvidersAnalysisData', dateRange, providersData],
+    queryKey: ['ProvidersAnalysisData', dateRange, ProvidersData],
     queryFn: getProvidersAnalysisData,
     onError: (error) => {
       toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -102,7 +98,7 @@ export default function Providers() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-6 text-center">Providers Management</h1>
       <ProvidersDataTable
-        providers={providersData?.data?.data || { individual: [], organizational: [] }}
+        providers={ProvidersData?.data?.data || { individual: [], organizational: [] }}
         loading={isProvidersLoading}
         refetch={refetch}
       />
@@ -234,5 +230,5 @@ export default function Providers() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -481,7 +481,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
 
-                                            {provider.user.status !== ''  && (
+                                            {provider.user.status !== 'pending' && (
                                                 <Tooltip
                                                     content={togglingProviderId === provider.id ? 'Updating...' :
                                                         provider.user.status === 'active' ? 'Deactivate' : 'Activate'}

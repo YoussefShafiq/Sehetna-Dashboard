@@ -13,7 +13,7 @@ import LineChart from './Charts/LineChart';
 export default function Users() {
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
-    endDate: addDays(new Date(), 1)
+    endDate: new Date()
   });
   const [exportingData, setExportingData] = useState(false);
 
@@ -55,7 +55,7 @@ export default function Users() {
           end_date: dateRange.endDate.toISOString().split('T')[0]
         },
       })
-      window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
+      console.log(response);
 
     } catch (error) {
       toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -63,12 +63,10 @@ export default function Users() {
         localStorage.removeItem('userToken');
         navigate('/login');
       }
-      analysisRefetch()
     } finally {
       setExportingData(false);
     }
   }
-
 
   function getUsersAnalysisData() {
     return axios.get(
@@ -86,7 +84,7 @@ export default function Users() {
   }
 
   const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching, error: analysisError } = useQuery({
-    queryKey: ['UserAanalysisData', dateRange, usersData],
+    queryKey: ['UserAanalysisData'],
     queryFn: getUsersAnalysisData,
     onError: (error) => {
       toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -135,7 +133,7 @@ export default function Users() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Users Management</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Users Management</h1>
       {/* <div className="flex flex-row items-center justify-center md:gap-5 p-5 bg-white mb-5 w-full md:w-fit m-auto rounded-2xl shadow-lg overflow-x-auto">
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full md:w-auto">
           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500">
@@ -190,6 +188,12 @@ export default function Users() {
           />
           <div className="flex justify-center items-center gap-2">
             {isAnalysisFetching && <Loader2 className='animate-spin text-primary' />}
+            <button
+              onClick={() => analysisRefetch()}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Search
+            </button>
             <button
               onClick={() => {
                 exportUsersData(analysisData?.data?.data?.export_url);
