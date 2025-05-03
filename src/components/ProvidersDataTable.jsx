@@ -471,13 +471,16 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                         <td className="px-3 py-4 whitespace-nowrap">
                                             {statusBadge(provider.user.status)}
                                         </td>
-                                        <td className="px-3 py-4 whitespace-nowrap">
+                                        <td className="px-3 py-4 whitespace-nowrap flex ">
                                             <button
                                                 onClick={() => handleShowDocuments(provider)}
                                                 className="text-blue-500 hover:text-blue-700"
                                             >
                                                 <FileText size={18} />
                                             </button>
+                                            {provider.documents.some(doc => doc.status === "pending") && (
+                                                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                                            )}
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
 

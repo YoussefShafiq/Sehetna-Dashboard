@@ -16,6 +16,7 @@ export default function Requests() {
     const [filters, setFilters] = useState({
         global: '',
         customer: '',
+        phone: '',
         service: '',
         provider: '',
         status: '',
@@ -78,7 +79,6 @@ export default function Requests() {
         }
     }
 
-
     function getRequestsAnalysisData() {
         return axios.get(
             `https://api.sehtnaa.com/api/admin/analytics/requests`,
@@ -95,7 +95,7 @@ export default function Requests() {
     }
 
     const { data: analysisData, isLoading: isAnalysisLoading, isError: isAnalysisError, refetch: analysisRefetch, isFetching: isAnalysisFetching } = useQuery({
-        queryKey: ['RequestsAnalysisData', dateRange],
+        queryKey: ['RequestsAnalysisData', dateRange, RequestsData],
         queryFn: getRequestsAnalysisData,
         onError: (error) => {
             toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
@@ -124,8 +124,9 @@ export default function Requests() {
     // Filter requests based on filter criteria
     const filteredRequests = RequestsData?.data?.data?.filter(request => {
         const customerName = `${request.customer?.first_name || ''} ${request.customer?.last_name || ''}`.toLowerCase();
+        const customerPhone = request.customer?.phone || '';
         const providerName = `${request.assigned_provider?.first_name || ''} ${request.assigned_provider?.last_name || ''}`.toLowerCase();
-        const serviceName = request.service?.name?.en?.toLowerCase() || '';
+        const serviceNames = request.services?.map(s => s.name?.en?.toLowerCase()).join(' ') || '';
         const requestStatus = request.status?.toLowerCase();
         const requestDate = new Date(request.created_at).toLocaleDateString();
         const requestAddress = request.address?.toLowerCase();
@@ -133,12 +134,13 @@ export default function Requests() {
         return (
             (filters.global === '' ||
                 customerName.includes(filters.global?.toLowerCase()) ||
-                serviceName.includes(filters.global?.toLowerCase()) ||
+                serviceNames.includes(filters.global?.toLowerCase()) ||
                 providerName.includes(filters.global?.toLowerCase()) ||
                 requestStatus.includes(filters.global?.toLowerCase()) ||
                 requestAddress.includes(filters.global?.toLowerCase())) &&
             (filters.customer === '' || customerName.includes(filters.customer?.toLowerCase())) &&
-            (filters.service === '' || serviceName.includes(filters.service?.toLowerCase())) &&
+            (filters.phone === '' || customerPhone.includes(filters.phone)) &&
+            (filters.service === '' || serviceNames.includes(filters.service?.toLowerCase())) &&
             (filters.provider === '' || providerName.includes(filters.provider?.toLowerCase())) &&
             (filters.status === '' || requestStatus.includes(filters.status?.toLowerCase())) &&
             (filters.date === '' || requestDate.includes(filters.date)) &&
@@ -191,7 +193,7 @@ export default function Requests() {
                 </div>
                 <div className="flex gap-1">
                     <Button
-                        onClick={() => setCurrentPage(1)}
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
                         className="p-1"
                     >
@@ -201,7 +203,7 @@ export default function Requests() {
                         Page {currentPage} of {totalPages}
                     </span>
                     <Button
-                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
                         className="p-1"
                     >
@@ -220,16 +222,14 @@ export default function Requests() {
         <div className="p-4">
             <h1 className="text-2xl font-bold mb-6 text-center">Requests Management</h1>
 
-
-
             {/* Requests Table */}
             <div className="shadow-2xl rounded-2xl overflow-hidden bg-white mt-6">
                 {/* Global Search */}
                 <div className="p-4 border-b">
                     <InputText
-                        value={filters.global}
-                        onChange={(e) => handleFilterChange('global', e.target.value)}
-                        placeholder="Search requests..."
+                        value={filters.customer}
+                        onChange={(e) => handleFilterChange('customer', e.target.value)}
+                        placeholder="Search Customer..."
                         className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full"
                     />
                 </div>
@@ -241,10 +241,10 @@ export default function Requests() {
                             <tr>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
-                                        type="text"
-                                        placeholder="Customer"
-                                        value={filters.customer}
-                                        onChange={(e) => handleFilterChange('customer', e.target.value)}
+                                        type="number"
+                                        placeholder="Phone"
+                                        value={filters.phone}
+                                        onChange={(e) => handleFilterChange('phone', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
                                     />
                                 </th>
@@ -322,8 +322,20 @@ export default function Requests() {
                                             <div className="text-gray-500 text-xs">{request.customer?.phone}</div>
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
-                                            {request.service?.name?.en}
-                                            <div className="text-gray-500 text-xs">${request.service?.price}</div>
+                                            <div className="flex flex-col gap-1">
+                                                {request.services?.map((service, idx) => (
+                                                    <div key={`${request.id}-${service.id}-${idx}`}>
+                                                        {service.name?.en}
+                                                        <div className="text-gray-500 text-xs">${service.price}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {request.services?.length > 1 && (
+                                                <div className="text-xs font-medium mt-1">
+                                                    Total: ${request.total_price ||
+                                                        request.services?.reduce((sum, s) => sum + parseFloat(s.price || 0), 0).toFixed(2)}
+                                                </div>
+                                            )}
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
                                             {request.assigned_provider ? (
@@ -383,12 +395,6 @@ export default function Requests() {
                     />
                     <div className="flex justify-center items-center gap-2">
                         {isAnalysisFetching && <Loader className='animate-spin text-primary' />}
-                        <button
-                            onClick={() => analysisRefetch()}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                        >
-                            Search
-                        </button>
                         <button
                             onClick={() => {
                                 exportRequestsData(analysisData?.data?.data?.export_url);
