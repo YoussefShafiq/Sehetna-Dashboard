@@ -537,7 +537,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
 
 export default function ProvidersDataTable({ providers, loading, refetch }) {
     return (
-        <div className="p-4">
+        <div className="">
 
             <ProviderTable
                 providers={providers?.individual || []}
