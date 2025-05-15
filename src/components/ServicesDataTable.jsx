@@ -46,7 +46,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
         name: { en: '', ar: '' },
         description: { en: '', ar: '' },
         provider_type: 'individual',
-        price: '',
+        price: 0,
         category_id: '',
         is_active: true
     });
@@ -295,7 +295,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             formDataToSend.append('description[en]', formData.description.en);
             formDataToSend.append('description[ar]', formData.description.ar);
             formDataToSend.append('provider_type', formData.provider_type);
-            formDataToSend.append('price', formData.price);
+            formDataToSend.append('price', formData.provider_type == 'organizational' ? 0 : formData.price);
             formDataToSend.append('category_id', formData.category_id);
 
             // Append files if they exist
@@ -339,7 +339,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             formDataToSend.append('name[ar]', formData.name.ar);
             formDataToSend.append('description[en]', formData.description.en);
             formDataToSend.append('description[ar]', formData.description.ar);
-            formDataToSend.append('price', formData.price);
+            formDataToSend.append('price', formData.provider_type == 'organizational' ? 0 : formData.price);
             formDataToSend.append('provider_type', formData.provider_type);
             formDataToSend.append('category_id', formData.category_id);
             formDataToSend.append('is_active', formData.is_active ? 1 : 0);
@@ -605,7 +605,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         {service.category.name.en}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
-                                        {service.price} EGP
+                                        {service.price || 0} EGP
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap capitalize">
                                         {service.provider_type}
@@ -679,6 +679,8 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
             {/* Pagination */}
             {!loading && renderPagination()}
+
+            {/* models */}
 
             {/* Add Service Modal */}
             {showAddModal && (
@@ -772,8 +774,8 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
                                             min="0"
-                                            step="0.01"
-                                            required
+                                            step="1.00"
+                                            disabled={formData.provider_type === 'organizational'}
                                         />
                                     </div>
                                     <div>
@@ -974,7 +976,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             className="w-full px-3 py-2 border rounded-md"
                                             min="0"
                                             step="0.01"
-                                            required
+                                            disabled={formData.provider_type === "organizational"}
                                         />
                                     </div>
                                     <div>
