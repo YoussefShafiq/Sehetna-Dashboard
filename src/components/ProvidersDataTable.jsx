@@ -7,8 +7,11 @@ import { Check, Loader2, X, Edit, ChevronRight, ChevronLeft, FileText, CheckCirc
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function ProviderDocumentsModal({ provider, onClose, refetch }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [approvingDocId, setApprovingDocId] = useState(null);
     const [rejectingDocId, setRejectingDocId] = useState(null);
     const [showRejectForm, setShowRejectForm] = useState(false);
@@ -27,12 +30,11 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                     }
                 }
             );
-            toast.success("Document approved successfully", { duration: 2000 });
+            toast.success(t("providers.documentApprovedSuccessfully"), { duration: 2000 });
             refetch(); // Refetch data to update the UI
             onClose(); // Close the modal after successful action
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("providers.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -59,13 +61,12 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                     }
                 }
             );
-            toast.success("Document rejected successfully", { duration: 2000 });
+            toast.success(t("providers.documentRejectedSuccessfully"), { duration: 2000 });
             setShowRejectForm(false);
             refetch(); // Refetch data to update the UI
             onClose(); // Close the modal after successful action
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("providers.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -113,7 +114,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">
-                            Documents for {provider.user.first_name} {provider.user.last_name}
+                            {t("providers.documentsFor", { name: `${provider.user.first_name} ${provider.user.last_name}` })}
                         </h2>
                         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                             <X size={24} />
@@ -133,10 +134,10 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                 className="bg-white rounded-lg shadow-xl w-full max-w-md p-6"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <h3 className="text-lg font-medium mb-4">Reject Document</h3>
+                                <h3 className="text-lg font-medium mb-4">{t("providers.rejectDocument")}</h3>
                                 <div className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                                        Rejection Reason
+                                        {t("providers.rejectionReason")}
                                     </label>
                                     <textarea
                                         value={rejectionReason}
@@ -151,7 +152,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                         onClick={() => setShowRejectForm(false)}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("common.cancel")}
                                     </button>
                                     <button
                                         onClick={handleRejectDocument}
@@ -161,7 +162,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                         {rejectingDocId === selectedDocId ? (
                                             <Loader2 className="animate-spin" size={18} />
                                         ) : (
-                                            'Reject'
+                                            t("providers.reject")
                                         )}
                                     </button>
                                 </div>
@@ -172,7 +173,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                     <div className="space-y-4">
                         {provider.documents.length === 0 ? (
                             <div className="text-center py-4 text-gray-500">
-                                No documents found for this provider
+                                {t("providers.noDocumentsFound")}
                             </div>
                         ) : (
                             provider.documents.map((doc) => (
@@ -186,7 +187,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                                 {statusBadge(doc.status)}
                                                 {doc.rejection_reason && (
                                                     <span className="text-xs text-gray-500">
-                                                        Reason: {doc.rejection_reason}
+                                                        {t("providers.reason")}: {doc.rejection_reason}
                                                     </span>
                                                 )}
                                             </div>
@@ -215,7 +216,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                                 ) : (
                                                     <>
                                                         <CheckCircle size={16} />
-                                                        Approve
+                                                        {t("providers.approve")}
                                                     </>
                                                 )}
                                             </button>
@@ -229,7 +230,7 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
                                                 ) : (
                                                     <>
                                                         <XCircle size={16} />
-                                                        Reject
+                                                        {t("providers.reject")}
                                                     </>
                                                 )}
                                             </button>
@@ -246,6 +247,8 @@ function ProviderDocumentsModal({ provider, onClose, refetch }) {
 }
 
 function ProviderTable({ providers, loading, title, refetch }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -279,8 +282,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
             toast.success(`Provider ${newStatus}d successfully`, { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("providers.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -347,9 +349,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredProviders.length)} of{' '}
-                    {filteredProviders.length} entries
+                    {t("providers.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredProviders.length), total: filteredProviders.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -360,7 +360,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("providers.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -384,7 +384,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                     <InputText
                         value={filters.global}
                         onChange={(e) => handleFilterChange('global', e.target.value)}
-                        placeholder={`Search ${title.toLowerCase()}...`}
+                        placeholder={t("providers.searchProviders")}
                         className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                     />
                 </div>
@@ -397,7 +397,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Name"
+                                        placeholder={t("providers.name")}
                                         value={filters.name}
                                         onChange={(e) => handleFilterChange('name', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -406,7 +406,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Email"
+                                        placeholder={t("providers.email")}
                                         value={filters.email}
                                         onChange={(e) => handleFilterChange('email', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -415,7 +415,7 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Phone"
+                                        placeholder={t("providers.phone")}
                                         value={filters.phone}
                                         onChange={(e) => handleFilterChange('phone', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -424,34 +424,34 @@ function ProviderTable({ providers, loading, title, refetch }) {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Status"
+                                        placeholder={t("providers.status")}
                                         value={filters.status}
                                         onChange={(e) => handleFilterChange('status', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
                                     />
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Documents
+                                    {t("providers.documents")}
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
+                                    {t("providers.actions")}
                                 </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200 text-sm">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5" className="px-3 py-4 text-center">
+                                    <td colSpan="6" className="px-3 py-4 text-center">
                                         <div className="flex justify-center items-center gap-2">
                                             <Loader2 className="animate-spin" size={18} />
-                                            Loading providers...
+                                            {t("providers.loadingProviders")}
                                         </div>
                                     </td>
                                 </tr>
                             ) : paginatedProviders.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-3 py-4 text-center">
-                                        No providers found
+                                    <td colSpan="6" className="px-3 py-4 text-center">
+                                        {t("providers.noProvidersFound")}
                                     </td>
                                 </tr>
                             ) : (
@@ -486,8 +486,8 @@ function ProviderTable({ providers, loading, title, refetch }) {
 
                                             {provider.user.status !== 'pending' && (
                                                 <Tooltip
-                                                    content={togglingProviderId === provider.id ? 'Updating...' :
-                                                        provider.user.status === 'active' ? 'Deactivate' : 'Activate'}
+                                                    content={togglingProviderId === provider.id ? t("providers.updating") :
+                                                        provider.user.status === 'active' ? t("providers.deactivate") : t("providers.activate")}
                                                     closeDelay={0}
                                                     delay={700}
                                                 >
@@ -536,20 +536,22 @@ function ProviderTable({ providers, loading, title, refetch }) {
 }
 
 export default function ProvidersDataTable({ providers, loading, refetch }) {
+    const { t } = useTranslation();
+
     return (
         <div className="">
 
             <ProviderTable
                 providers={providers?.individual || []}
                 loading={loading}
-                title="Individual Providers"
+                title={t("providers.individualProviders")}
                 refetch={refetch}
             />
 
             <ProviderTable
                 providers={providers?.organizational || []}
                 loading={loading}
-                title="Organizational Providers"
+                title={t("providers.organizationalProviders")}
                 refetch={refetch}
             />
         </div>

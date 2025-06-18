@@ -2,6 +2,7 @@ import React from 'react'
 import amico from '../assets/images/amico.png'
 import { useNavigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
+import { t } from 'i18next';
 
 
 export default function HomeServicesCard({ services, loading }) {
@@ -15,8 +16,8 @@ export default function HomeServicesCard({ services, loading }) {
     return <>
         <div className="bg-white rounded-2xl p-5 pb-0 max-h-[40vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-                <h2 className='capitalize font-semibold text-xl text-black'>Services</h2>
-                <button onClick={handleViewAllServices} className="text-green-500">view all</button>
+                <h2 className='capitalize font-semibold text-xl text-black'>{t('services.title')}</h2>
+                <button onClick={handleViewAllServices} className="text-green-500">{t('common.viewAll')}</button>
             </div>
             {loading ? (
                 <tr>

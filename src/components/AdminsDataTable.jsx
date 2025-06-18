@@ -7,8 +7,11 @@ import { Check, Loader2, Plus, Trash2, X, Edit, ChevronRight, ChevronLeft } from
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function AdminsDataTable({ admins, loading, refetch }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -58,11 +61,10 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                     }
                 }
             );
-            toast.success(`Admin ${currentStatus === 'active' ? 'deactivated' : 'activated'}`, { duration: 2000 });
+            toast.success(currentStatus === 'active' ? t('admins.adminDeactivated') : t('admins.adminActivated'), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -95,11 +97,10 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                     }
                 }
             );
-            toast.success("Admin deleted successfully", { duration: 2000 });
+            toast.success(t('admins.adminDeletedSuccessfully'), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -128,14 +129,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.first_name) newErrors.first_name = 'First name is required';
-        if (!formData.last_name) newErrors.last_name = 'Last name is required';
-        if (!formData.email) newErrors.email = 'Email is required';
-        if (!formData.phone) newErrors.phone = 'Phone is required';
-        if (!formData.role) newErrors.role = 'Role is required';
+        if (!formData.first_name) newErrors.first_name = t('admins.firstName') + ' ' + t('common.required');
+        if (!formData.last_name) newErrors.last_name = t('admins.lastName') + ' ' + t('common.required');
+        if (!formData.email) newErrors.email = t('common.email') + ' ' + t('common.required');
+        if (!formData.phone) newErrors.phone = t('common.phone') + ' ' + t('common.required');
+        if (!formData.role) newErrors.role = t('admins.role') + ' ' + t('common.required');
 
         // Only require password for new admin creation
-        if (!showEditModal && !formData.password) newErrors.password = 'Password is required';
+        if (!showEditModal && !formData.password) newErrors.password = t('login.password') + ' ' + t('common.required');
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -162,14 +163,13 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             );
 
             setUpdatingAdmin(false);
-            toast.success("Admin added successfully", { duration: 2000 });
+            toast.success(t('admins.adminAddedSuccessfully'), { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingAdmin(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -197,14 +197,13 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                 }
             );
             setUpdatingAdmin(false);
-            toast.success("Admin updated successfully", { duration: 2000 });
+            toast.success(t('admins.adminUpdatedSuccessfully'), { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingAdmin(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -265,7 +264,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
             : 'bg-[#930002] text-white';
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
-                {status === 'active' ? 'Active' : 'Inactive'}
+                {status === 'active' ? t('common.active') : t('common.inactive')}
             </span>
         );
     };
@@ -278,7 +277,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                 : 'bg-green-600 text-white';
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${roleClass} min-w-16 text-center`}>
-                {role === 'super_admin' ? 'Super Admin' : role === 'admin' ? 'Admin' : 'Mod'}
+                {role === 'super_admin' ? t('admins.superAdmin') : role === 'admin' ? t('admins.admin') : t('admins.moderator')}
             </span>
         );
     };
@@ -289,9 +288,11 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredAdmins.length)} of{' '}
-                    {filteredAdmins.length} entries
+                    {t('admins.showingEntries', {
+                        start: (currentPage - 1) * rowsPerPage + 1,
+                        end: Math.min(currentPage * rowsPerPage, filteredAdmins.length),
+                        total: filteredAdmins.length
+                    })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -302,7 +303,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t('admins.pageOf', { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -323,12 +324,12 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search admins..."
+                    placeholder={t('admins.searchAdmins')}
                     className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
                 <Button
                     icon={<Plus size={18} />}
-                    label="Add Admin"
+                    label={t('admins.addAdmin')}
                     onClick={() => setShowAddModal(true)}
                     className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
@@ -342,7 +343,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Name"
+                                    placeholder={t('common.name')}
                                     value={filters.name}
                                     onChange={(e) => handleFilterChange('name', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -351,7 +352,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Email"
+                                    placeholder={t('common.email')}
                                     value={filters.email}
                                     onChange={(e) => handleFilterChange('email', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -360,7 +361,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Role"
+                                    placeholder={t('admins.role')}
                                     value={filters.role}
                                     onChange={(e) => handleFilterChange('role', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -369,14 +370,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Status"
+                                    placeholder={t('common.status')}
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
+                                {t('common.actions')}
                             </th>
                         </tr>
                     </thead>
@@ -386,14 +387,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                 <td colSpan="5" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading admins...
+                                        {t('admins.loadingAdmins')}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedAdmins.length === 0 ? (
                             <tr>
                                 <td colSpan="5" className="px-3 py-4 text-center">
-                                    No admins found
+                                    {t('admins.noAdminsFound')}
                                 </td>
                             </tr>
                         ) : (
@@ -425,7 +426,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="Edit admin" closeDelay={0} delay={700}>
+                                            <Tooltip content={t('admins.editAdminTooltip')} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
                                                     onClick={() => prepareEditForm(admin)}
@@ -435,8 +436,8 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={togglingAdminEmail === admin.email ? 'Updating...' :
-                                                    `${admin.status === 'active' ? 'Deactivate' : 'Activate'} admin`}
+                                                content={togglingAdminEmail === admin.email ? t('admins.updating') :
+                                                    admin.status === 'active' ? t('admins.deactivateAdminTooltip') : t('admins.activateAdminTooltip')}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -454,7 +455,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={deletingAdminEmail === admin.email ? 'Deleting...' : 'Delete admin'}
+                                                content={deletingAdminEmail === admin.email ? t('admins.deleting') : t('admins.deleteAdminTooltip')}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -499,11 +500,11 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Admin</h2>
+                            <h2 className="text-xl font-bold mb-4">{t('admins.addNewAdmin')}</h2>
                             <form onSubmit={handleAddAdmin}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.firstName')}</label>
                                         <input
                                             type="text"
                                             name="first_name"
@@ -515,7 +516,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         {errors.first_name && <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.lastName')}</label>
                                         <input
                                             type="text"
                                             name="last_name"
@@ -530,7 +531,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.email')}</label>
                                         <input
                                             type="email"
                                             name="email"
@@ -542,7 +543,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.phone')}</label>
                                         <input
                                             type="text"
                                             name="phone"
@@ -557,7 +558,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('login.password')}</label>
                                         <input
                                             type="password"
                                             name="password"
@@ -569,7 +570,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.role')}</label>
                                         <select
                                             name="role"
                                             value={formData.role}
@@ -577,7 +578,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                             className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}
                                             required
                                         >
-                                            <option value="admin">Admin</option>
+                                            <option value="admin">{t('admins.admin')}</option>
                                         </select>
                                         {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
                                     </div>
@@ -592,14 +593,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingAdmin}
                                     >
-                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'add Admin'}
+                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : t('admins.addAdmin')}
 
                                     </button>
                                 </div>
@@ -626,11 +627,11 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Admin</h2>
+                            <h2 className="text-xl font-bold mb-4">{t('admins.editAdmin')}</h2>
                             <form onSubmit={handleUpdateAdmin}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.firstName')}</label>
                                         <input
                                             type="text"
                                             name="first_name"
@@ -642,7 +643,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         {errors.first_name && <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.lastName')}</label>
                                         <input
                                             type="text"
                                             name="last_name"
@@ -657,7 +658,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.email')}</label>
                                         <input
                                             type="email"
                                             name="email"
@@ -670,7 +671,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('common.phone')}</label>
                                         <input
                                             type="text"
                                             name="phone"
@@ -686,7 +687,7 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            New Password (leave blank to keep current)
+                                            {t('admins.newPassword')}
                                         </label>
                                         <input
                                             type="password"
@@ -694,11 +695,11 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                             value={formData.password}
                                             onChange={handleFormChange}
                                             className="w-full px-3 py-2 border rounded-md"
-                                            placeholder="Leave empty to keep current password"
+                                            placeholder={t('admins.passwordPlaceholder')}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admins.role')}</label>
                                         <select
                                             name="role"
                                             value={formData.role}
@@ -706,9 +707,9 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                             className={`w-full px-3 py-2 border rounded-md ${errors.role ? 'border-red-500' : ''}`}
                                             required
                                         >
-                                            <option value="admin">Admin</option>
+                                            <option value="admin">{t('admins.admin')}</option>
                                             {selectedAdmin?.admin?.role === 'super_admin' && (
-                                                <option value="super_admin">Super Admin</option>
+                                                <option value="super_admin">{t('admins.superAdmin')}</option>
                                             )}
                                         </select>
                                         {errors.role && <p className="text-red-500 text-xs mt-1">{errors.role}</p>}
@@ -724,14 +725,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingAdmin}
                                     >
-                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Admin'}
+                                        {updatingAdmin ? <Loader2 className="animate-spin mx-auto" size={18} /> : t('admins.updateAdmin')}
                                     </button>
                                 </div>
                             </form>
@@ -762,10 +763,10 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     <Trash2 className="h-5 w-5 text-red-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Delete Admin</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">{t('admins.deleteAdminConfirm')}</h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this admin? This action cannot be undone.
+                                            {t('admins.deleteAdminMessage')}
                                         </p>
                                     </div>
                                 </div>
@@ -776,14 +777,14 @@ export default function AdminsDataTable({ admins, loading, refetch }) {
                                     onClick={() => setShowDeleteConfirm(false)}
                                     className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleConfirmDelete}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                                 >
-                                    Delete
+                                    {t('common.delete')}
                                 </button>
                             </div>
                         </div>

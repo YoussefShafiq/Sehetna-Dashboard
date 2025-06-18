@@ -7,8 +7,11 @@ import { Check, Loader2, Plus, Trash2, X, Edit, Image as ImageIcon, ChevronRight
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function CategoriesDataTable({ categories, loading, refetch }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -57,11 +60,10 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                     }
                 }
             );
-            toast.success("Category status updated", { duration: 2000 });
+            toast.success(t('categories.categoryStatusUpdated'), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -91,11 +93,10 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                     }
                 }
             );
-            toast.success("Category deleted successfully", { duration: 2000 });
+            toast.success(t('categories.categoryDeletedSuccessfully'), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -174,14 +175,13 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                 }
             );
             setUpdatingCategory(false);
-            toast.success("Category added successfully", { duration: 2000 });
+            toast.success(t('categories.categoryAddedSuccessfully'), { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingCategory(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -219,14 +219,13 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                 }
             );
             setUpdatingCategory(false);
-            toast.success("Category updated successfully", { duration: 2000 });
+            toast.success(t('categories.categoryUpdatedSuccessfully'), { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingCategory(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -289,7 +288,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
             : 'bg-[#930002] text-white';
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
-                {isActive ? 'Active' : 'Inactive'}
+                {isActive ? t('common.active') : t('common.inactive')}
             </span>
         );
     };
@@ -300,9 +299,11 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredCategories.length)} of{' '}
-                    {filteredCategories.length} entries
+                    {t('categories.showingEntries', {
+                        start: (currentPage - 1) * rowsPerPage + 1,
+                        end: Math.min(currentPage * rowsPerPage, filteredCategories.length),
+                        total: filteredCategories.length
+                    })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -313,7 +314,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t('categories.pageOf', { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -334,12 +335,12 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search categories..."
+                    placeholder={t('categories.searchCategories')}
                     className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
                 <Button
                     icon={<Plus size={18} />}
-                    label="Add Category"
+                    label={t('categories.addCategory')}
                     onClick={() => setShowAddModal(true)}
                     className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
@@ -353,7 +354,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Name"
+                                    placeholder={t('common.name')}
                                     value={filters.name}
                                     onChange={(e) => handleFilterChange('name', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -362,7 +363,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Order"
+                                    placeholder={t('categories.order')}
                                     value={filters.order}
                                     onChange={(e) => handleFilterChange('order', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -371,14 +372,14 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Status"
+                                    placeholder={t('common.status')}
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
+                                {t('common.actions')}
                             </th>
                         </tr>
                     </thead>
@@ -388,14 +389,14 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                 <td colSpan="4" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading categories...
+                                        {t('categories.loadingCategories')}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedCategories.length === 0 ? (
                             <tr>
                                 <td colSpan="4" className="px-3 py-4 text-center">
-                                    No categories found
+                                    {t('categories.noCategoriesFound')}
                                 </td>
                             </tr>
                         ) : (
@@ -424,7 +425,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="Edit category" closeDelay={0} delay={700}>
+                                            <Tooltip content={t('categories.editCategoryTooltip')} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
                                                     onClick={() => prepareEditForm(category)}
@@ -434,8 +435,8 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={togglingCategoryId === category.id ? 'Updating...' :
-                                                    `${category.is_active ? 'Deactivate' : 'Activate'} category`}
+                                                content={togglingCategoryId === category.id ? t('categories.updating') :
+                                                    category.is_active ? t('categories.deactivateCategoryTooltip') : t('categories.activateCategoryTooltip')}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -453,7 +454,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={deletingCategoryId === category.id ? 'Deleting...' : 'Delete category'}
+                                                content={deletingCategoryId === category.id ? t('categories.deleting') : t('categories.deleteCategoryTooltip')}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -498,11 +499,11 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Category</h2>
+                            <h2 className="text-xl font-bold mb-4">{t('categories.addNewCategory')}</h2>
                             <form onSubmit={handleAddCategory}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.nameEnglish')}</label>
                                         <input
                                             type="text"
                                             name="name[en]"
@@ -513,7 +514,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.nameArabic')}</label>
                                         <input
                                             type="text"
                                             name="name[ar]"
@@ -527,7 +528,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.descriptionEnglish')}</label>
                                         <textarea
                                             name="description[en]"
                                             value={formData.description.en}
@@ -537,7 +538,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.descriptionArabic')}</label>
                                         <textarea
                                             name="description[ar]"
                                             value={formData.description.ar}
@@ -550,7 +551,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.order')}</label>
                                         <input
                                             type="number"
                                             name="order"
@@ -562,7 +563,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.icon')}</label>
                                         <div className="flex items-center gap-2">
                                             {iconPreview ? (
                                                 <div className="relative">
@@ -579,7 +580,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                                 <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
                                                     <div className="flex flex-col items-center justify-center">
                                                         <ImageIcon size={20} className="text-gray-400" />
-                                                        <span className="text-xs text-gray-500">Upload Icon</span>
+                                                        <span className="text-xs text-gray-500">{t('categories.uploadIcon')}</span>
                                                     </div>
                                                     <input
                                                         type="file"
@@ -602,7 +603,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label className="ml-2 block text-sm text-gray-700">
-                                        Allow multiple selections
+                                        {t('categories.allowMultipleSelections')}
                                     </label>
                                 </div>
 
@@ -615,14 +616,14 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingCategory}
                                     >
-                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Add Category'}
+                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : t('categories.addCategory')}
 
                                     </button>
                                 </div>
@@ -649,11 +650,11 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Category</h2>
+                            <h2 className="text-xl font-bold mb-4">{t('categories.editCategoryTitle')}</h2>
                             <form onSubmit={handleEditCategory}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.nameEnglish')}</label>
                                         <input
                                             type="text"
                                             name="name[en]"
@@ -664,7 +665,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.nameArabic')}</label>
                                         <input
                                             type="text"
                                             name="name[ar]"
@@ -678,7 +679,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.descriptionEnglish')}</label>
                                         <textarea
                                             name="description[en]"
                                             value={formData.description.en}
@@ -688,7 +689,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.descriptionArabic')}</label>
                                         <textarea
                                             name="description[ar]"
                                             value={formData.description.ar}
@@ -701,7 +702,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.order')}</label>
                                         <input
                                             type="number"
                                             name="order"
@@ -713,7 +714,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('categories.icon')}</label>
                                         <div className="flex items-center gap-2">
                                             {iconPreview && (
                                                 <div className="relative">
@@ -731,7 +732,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                                 <div className="flex flex-col items-center justify-center">
                                                     <ImageIcon size={20} className="text-gray-400" />
                                                     <span className="text-xs text-gray-500">
-                                                        {iconPreview ? 'Change Icon' : 'Upload Icon'}
+                                                        {iconPreview ? t('categories.changeIcon') : t('categories.uploadIcon')}
                                                     </span>
                                                 </div>
                                                 <input
@@ -753,7 +754,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label className="ml-2 block text-sm text-gray-700">
-                                        Allow multiple selections
+                                        {t('categories.allowMultipleSelections')}
                                     </label>
                                 </div>
                                 <div className="flex items-center mb-4">
@@ -765,7 +766,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label className="ml-2 block text-sm text-gray-700">
-                                        Active Category
+                                        {t('categories.activeCategory')}
                                     </label>
                                 </div>
 
@@ -778,14 +779,14 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingCategory}
                                     >
-                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Category'}
+                                        {updatingCategory ? <Loader2 className="animate-spin mx-auto" size={18} /> : t('categories.editCategory')}
                                     </button>
                                 </div>
                             </form>
@@ -816,10 +817,10 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     <Trash2 className="h-5 w-5 text-red-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Delete Category</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">{t('categories.deleteCategoryConfirm')}</h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this category? This action cannot be undone.
+                                            {t('categories.deleteCategoryMessage')}
                                         </p>
                                     </div>
                                 </div>
@@ -830,14 +831,14 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                                     onClick={() => setShowDeleteConfirm(false)}
                                     className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                 >
-                                    Cancel
+                                    {t('common.cancel')}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleConfirmDelete}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                                 >
-                                    Delete
+                                    {t('common.delete')}
                                 </button>
                             </div>
                         </div>

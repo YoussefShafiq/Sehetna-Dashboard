@@ -8,8 +8,11 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function ServicesDataTable({ services, loading, refetch, categories }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -80,7 +83,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     }
                 }
             );
-            toast.success("Requirement added successfully", { duration: 2000 });
+            toast.success(t("services.requirementAddedSuccess"), { duration: 2000 });
             await refetch(); // Wait for services to be refetched
             fetchRequirements(selectedService); // Then update requirements from fresh services data
             setShowAddRequirementModal(false);
@@ -89,8 +92,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                 type: 'input'
             });
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -113,13 +115,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     }
                 }
             );
-            toast.success("Requirement updated successfully", { duration: 2000 });
+            toast.success(t("services.requirementUpdatedSuccess"), { duration: 2000 });
             await refetch(); // Wait for services to be refetched
             fetchRequirements(selectedService); // Then update requirements from fresh services data
             setShowEditRequirementModal(false);
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -143,12 +144,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     }
                 }
             );
-            toast.success("Requirement deleted successfully", { duration: 2000 });
+            toast.success(t("services.requirementDeletedSuccess"), { duration: 2000 });
             await refetch(); // Wait for services to be refetched
             fetchRequirements(selectedService); // Then update requirements from fresh services data
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -185,11 +185,10 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     }
                 }
             );
-            toast.success("Service status updated", { duration: 2000 });
+            toast.success(t("services.serviceStatusUpdated"), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -219,11 +218,10 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     }
                 }
             );
-            toast.success("Service deleted successfully", { duration: 2000 });
+            toast.success(t("services.serviceDeletedSuccess"), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -313,14 +311,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                 }
             );
             setIsAdding(false);
-            toast.success("Service added successfully", { duration: 2000 });
+            toast.success(t("services.serviceAddedSuccess"), { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setIsAdding(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -360,14 +357,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                 }
             );
             setIsEditing(false);
-            toast.success("Service updated successfully", { duration: 2000 });
+            toast.success(t("services.serviceUpdatedSuccess"), { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setIsEditing(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -442,7 +438,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
             : 'bg-[#930002] text-white';
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
-                {isActive ? 'Active' : 'Inactive'}
+                {isActive ? t("services.active") : t("services.inactive")}
             </span>
         );
     };
@@ -453,9 +449,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredServices.length)} of{' '}
-                    {filteredServices.length} entries
+                    {t("requests.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredServices.length), total: filteredServices.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -473,7 +467,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         <ChevronLeft />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("requests.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         icon="pi pi-angle-right"
@@ -501,12 +495,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search services..."
+                    placeholder={t("services.searchServices")}
                     className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 border-primary border w-full"
                 />
                 <Button
                     icon={<Plus size={18} />}
-                    label="Add Service"
+                    label={t("services.addService")}
                     onClick={() => setShowAddModal(true)}
                     className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
@@ -520,7 +514,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Name"
+                                    placeholder={t("services.name")}
                                     value={filters.name}
                                     onChange={(e) => handleFilterChange('name', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -529,7 +523,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Category"
+                                    placeholder={t("services.category")}
                                     value={filters.category}
                                     onChange={(e) => handleFilterChange('category', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -538,7 +532,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Price"
+                                    placeholder={t("services.price")}
                                     value={filters.price}
                                     onChange={(e) => handleFilterChange('price', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -547,7 +541,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Provider Type"
+                                    placeholder={t("services.providerType")}
                                     value={filters.provider_type}
                                     onChange={(e) => handleFilterChange('provider_type', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -556,14 +550,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Status"
+                                    placeholder={t("services.status")}
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
+                                {t("services.actions")}
                             </th>
                         </tr>
                     </thead>
@@ -573,14 +567,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                 <td colSpan="6" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading services...
+                                        {t("services.loadingServices")}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedServices.length === 0 ? (
                             <tr>
                                 <td colSpan="6" className="px-3 py-4 text-center">
-                                    No services found
+                                    {t("services.noServicesFound")}
                                 </td>
                             </tr>
                         ) : (
@@ -608,14 +602,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         {service.price || 0} EGP
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap capitalize">
-                                        {service.provider_type}
+                                        {service.provider_type === 'individual' ? t("services.individual") : t("services.organizational")}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         {statusBadge(service.is_active)}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="Service requirements" closeDelay={0} delay={700}>
+                                            <Tooltip content={t("services.serviceRequirements")} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-purple-500 ring-0"
                                                     onClick={() => handleShowRequirements(service)}
@@ -623,7 +617,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                     <List size={18} />
                                                 </Button>
                                             </Tooltip>
-                                            <Tooltip content="Edit service" closeDelay={0} delay={700}>
+                                            <Tooltip content={t("services.editService")} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
                                                     onClick={() => prepareEditForm(service)}
@@ -633,8 +627,8 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={togglingServiceId === service.id ? 'Updating...' :
-                                                    `${service.is_active ? 'Deactivate' : 'Activate'} service`}
+                                                content={togglingServiceId === service.id ? t("services.updating") :
+                                                    `${service.is_active ? t("services.deactivateService") : t("services.activateService")}`}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -652,7 +646,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={deletingServiceId === service.id ? 'Deleting...' : 'Delete service'}
+                                                content={deletingServiceId === service.id ? t("services.deleting") : t("services.deleteService")}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -699,11 +693,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Service</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("services.addNewService")}</h2>
                             <form onSubmit={handleAddService}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameEnglish")}</label>
                                         <input
                                             type="text"
                                             name="name[en]"
@@ -714,7 +708,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameArabic")}</label>
                                         <input
                                             type="text"
                                             name="name[ar]"
@@ -728,7 +722,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.descriptionEnglish")}</label>
                                         <textarea
                                             name="description[en]"
                                             value={formData.description.en}
@@ -739,7 +733,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.descriptionArabic")}</label>
                                         <textarea
                                             name="description[ar]"
                                             value={formData.description.ar}
@@ -753,7 +747,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.providerTypeLabel")}</label>
                                         <select
                                             name="provider_type"
                                             value={formData.provider_type}
@@ -761,12 +755,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             className="w-full px-3 py-2 border rounded-md"
                                             required
                                         >
-                                            <option value="individual">Individual</option>
-                                            <option value="organizational">Organizational</option>
+                                            <option value="individual">{t("services.individual")}</option>
+                                            <option value="organizational">{t("services.organizational")}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.priceLabel")}</label>
                                         <input
                                             type="number"
                                             name="price"
@@ -779,7 +773,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.categoryId")}</label>
                                         <select
                                             name="category_id"
                                             value={formData.category_id}
@@ -787,7 +781,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             className={`w-full px-3 py-2 border rounded-md `}
                                             required
                                         >
-                                            <option value="" disabled >Select a category</option>
+                                            <option value="" disabled >{t("services.selectCategory")}</option>
                                             {categories.map((category) => (
                                                 <option key={category.id} value={category.id}>{category.name.en}</option>
                                             ))}
@@ -797,7 +791,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.icon")}</label>
                                         <div className="flex items-center gap-2">
                                             {iconPreview ? (
                                                 <div className="relative">
@@ -814,7 +808,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                 <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
                                                     <div className="flex flex-col items-center justify-center">
                                                         <ImageIcon size={20} className="text-gray-400" />
-                                                        <span className="text-xs text-gray-500">Upload Icon</span>
+                                                        <span className="text-xs text-gray-500">{t("services.uploadIcon")}</span>
                                                     </div>
                                                     <input
                                                         type="file"
@@ -827,7 +821,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.coverPhoto")}</label>
                                         <div className="flex items-center gap-2">
                                             {coverPreview ? (
                                                 <div className="relative">
@@ -844,7 +838,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                 <label className="flex flex-col items-center justify-center w-full h-16 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
                                                     <div className="flex flex-col items-center justify-center">
                                                         <ImageIcon size={20} className="text-gray-400" />
-                                                        <span className="text-xs text-gray-500">Upload Cover</span>
+                                                        <span className="text-xs text-gray-500">{t("services.uploadCover")}</span>
                                                     </div>
                                                     <input
                                                         type="file"
@@ -867,14 +861,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("services.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all  "
                                         disabled={isAdding}
                                     >
-                                        {isAdding ? <><Loader2 className="animate-spin" size={18} /></> : 'Add Service'}
+                                        {isAdding ? <><Loader2 className="animate-spin" size={18} /></> : t("services.addService")}
                                     </button>
                                 </div>
                             </form>
@@ -900,11 +894,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Service</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("services.editService")}</h2>
                             <form onSubmit={handleEditService}>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameEnglish")}</label>
                                         <input
                                             type="text"
                                             name="name[en]"
@@ -915,7 +909,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameArabic")}</label>
                                         <input
                                             type="text"
                                             name="name[ar]"
@@ -929,7 +923,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.descriptionEnglish")}</label>
                                         <textarea
                                             name="description[en]"
                                             value={formData.description.en}
@@ -940,7 +934,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Description (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.descriptionArabic")}</label>
                                         <textarea
                                             name="description[ar]"
                                             value={formData.description.ar}
@@ -954,7 +948,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.providerTypeLabel")}</label>
                                         <select
                                             name="provider_type"
                                             value={formData.provider_type}
@@ -962,12 +956,12 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             className="w-full px-3 py-2 border rounded-md"
 
                                         >
-                                            <option value="individual">Individual</option>
-                                            <option value="organizational">Organizational</option>
+                                            <option value="individual">{t("services.individual")}</option>
+                                            <option value="organizational">{t("services.organizational")}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Price (EGP)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.priceLabel")}</label>
                                         <input
                                             type="number"
                                             name="price"
@@ -980,7 +974,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Category ID</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.categoryId")}</label>
                                         <select
                                             name="category_id"
                                             value={formData.category_id}
@@ -988,7 +982,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                             className={`w-full px-3 py-2 border rounded-md `}
                                             required
                                         >
-                                            <option value="" disabled >Select a category</option>
+                                            <option value="" disabled >{t("services.selectCategory")}</option>
                                             {categories.map((category) => (
                                                 <option key={category.id} value={category.id}>{category.name.en}</option>
                                             ))}
@@ -998,7 +992,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.icon")}</label>
                                         <div className="flex items-center gap-2">
                                             {iconPreview && (
                                                 <div className="relative">
@@ -1016,7 +1010,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                 <div className="flex flex-col items-center justify-center">
                                                     <ImageIcon size={20} className="text-gray-400" />
                                                     <span className="text-xs text-gray-500">
-                                                        {iconPreview ? 'Change Icon' : 'Upload Icon'}
+                                                        {iconPreview ? t("services.changeIcon") : t("services.uploadIcon")}
                                                     </span>
                                                 </div>
                                                 <input
@@ -1029,7 +1023,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Cover Photo</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.coverPhoto")}</label>
                                         <div className="flex items-center gap-2">
                                             {coverPreview && (
                                                 <div className="relative">
@@ -1047,7 +1041,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                 <div className="flex flex-col items-center justify-center">
                                                     <ImageIcon size={20} className="text-gray-400" />
                                                     <span className="text-xs text-gray-500">
-                                                        {coverPreview ? 'Change Cover' : 'Upload Cover'}
+                                                        {coverPreview ? t("services.changeCover") : t("services.uploadCover")}
                                                     </span>
                                                 </div>
                                                 <input
@@ -1070,7 +1064,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                     />
                                     <label className="ml-2 block text-sm text-gray-700">
-                                        Active Service
+                                        {t("services.activeService")}
                                     </label>
                                 </div>
 
@@ -1083,14 +1077,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("services.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={isEditing}
                                     >
-                                        {isEditing ? <><Loader2 className="animate-spin" size={18} /></> : 'Update'}
+                                        {isEditing ? <><Loader2 className="animate-spin" size={18} /></> : t("services.update")}
                                     </button>
                                 </div>
                             </form>
@@ -1121,10 +1115,10 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     <Trash2 className="h-5 w-5 text-red-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Delete Service</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">{t("services.deleteServiceTitle")}</h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this service? This action cannot be undone.
+                                            {t("services.deleteServiceMessage")}
                                         </p>
                                     </div>
                                 </div>
@@ -1135,14 +1129,14 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                     onClick={() => setShowDeleteConfirm(false)}
                                     className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                 >
-                                    Cancel
+                                    {t("services.cancel")}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleConfirmDelete}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                                 >
-                                    Delete
+                                    {t("services.deleteService")}
                                 </button>
                             </div>
                         </div>
@@ -1168,11 +1162,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                     >
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-bold">Service Requirements</h2>
+                                <h2 className="text-xl font-bold">{t("services.requirements")}</h2>
                                 <div className="flex gap-2">
                                     <Button
                                         icon={<Plus size={18} />}
-                                        label="Add Requirement"
+                                        label={t("services.addRequirement")}
                                         onClick={() => setShowAddRequirementModal(true)}
                                         className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                                     />
@@ -1188,17 +1182,17 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                 <table className="w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name (EN)</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name (AR)</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("services.nameEN")}</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("services.nameAR")}</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("services.type")}</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("services.actions")}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200 text-sm">
                                         {requirements.length === 0 ? (
                                             <tr>
                                                 <td colSpan="4" className="px-3 py-4 text-center">
-                                                    No requirements found
+                                                    {t("services.noRequirementsFound")}
                                                 </td>
                                             </tr>
                                         ) : (
@@ -1209,7 +1203,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                     <td className="px-3 py-4 whitespace-nowrap capitalize">{requirement.type}</td>
                                                     <td className="px-3 py-4 whitespace-nowrap">
                                                         <div className="flex items-center gap-2">
-                                                            <Tooltip content="Edit requirement" closeDelay={0} delay={700}>
+                                                            <Tooltip content={t("services.editRequirement")} closeDelay={0} delay={700}>
                                                                 <Button
                                                                     className="text-blue-500 ring-0"
                                                                     onClick={() => prepareEditRequirement(requirement)}
@@ -1217,7 +1211,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                                                     <Edit size={18} />
                                                                 </Button>
                                                             </Tooltip>
-                                                            <Tooltip content="Delete requirement" closeDelay={0} delay={700}>
+                                                            <Tooltip content={t("services.deleteRequirement")} closeDelay={0} delay={700}>
                                                                 <Button
                                                                     className="text-red-500 ring-0"
                                                                     onClick={() => handleDeleteRequirement(requirement.id)}
@@ -1255,11 +1249,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Requirement</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("services.addNewRequirement")}</h2>
                             <form onSubmit={handleAddRequirement}>
                                 <div className="grid grid-cols-1 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameEnglish")}</label>
                                         <input
                                             type="text"
                                             name="name.en"
@@ -1276,7 +1270,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameArabic")}</label>
                                         <input
                                             type="text"
                                             name="name.ar"
@@ -1293,7 +1287,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.typeLabel")}</label>
                                         <select
                                             name="type"
                                             value={requirementForm.type}
@@ -1316,13 +1310,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         onClick={() => setShowAddRequirementModal(false)}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("services.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
-                                        Add Requirement
+                                        {t("services.addRequirement")}
                                     </button>
                                 </div>
                             </form>
@@ -1348,11 +1342,11 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Requirement</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("services.editRequirement")}</h2>
                             <form onSubmit={handleEditRequirement}>
                                 <div className="grid grid-cols-1 gap-4 mb-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (English)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameEnglish")}</label>
                                         <input
                                             type="text"
                                             name="name.en"
@@ -1369,7 +1363,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Name (Arabic)</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.nameArabic")}</label>
                                         <input
                                             type="text"
                                             name="name.ar"
@@ -1386,7 +1380,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("services.typeLabel")}</label>
                                         <select
                                             name="type"
                                             value={requirementForm.type}
@@ -1409,13 +1403,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                                         onClick={() => setShowEditRequirementModal(false)}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("services.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
-                                        Update Requirement
+                                        {t("services.updateRequirement")}
                                     </button>
                                 </div>
                             </form>

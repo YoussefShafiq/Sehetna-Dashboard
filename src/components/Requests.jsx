@@ -13,8 +13,10 @@ import LineChart from './Charts/LineChart';
 import { GiReceiveMoney } from "react-icons/gi";
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Requests() {
+    const { t } = useTranslation();
     const [filters, setFilters] = useState({
         customer: '',
         phone: '',
@@ -70,7 +72,7 @@ export default function Requests() {
             window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("requests.unexpectedError"), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -99,7 +101,7 @@ export default function Requests() {
         queryKey: ['RequestsAnalysisData', dateRange, RequestsData],
         queryFn: getRequestsAnalysisData,
         onError: (error) => {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("requests.unexpectedError"), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -152,26 +154,33 @@ export default function Requests() {
 
     const statusBadge = (status) => {
         let statusClass = '';
+        let statusText = '';
+
         switch (status) {
             case 'pending':
                 statusClass = 'bg-yellow-500 text-white';
+                statusText = t("requests.pending");
                 break;
             case 'accepted':
                 statusClass = 'bg-green-500 text-white';
+                statusText = t("requests.accepted");
                 break;
             case 'cancelled':
                 statusClass = 'bg-[#930002] text-white';
+                statusText = t("requests.cancelled");
                 break;
             case 'completed':
                 statusClass = 'bg-[#009379] text-white';
+                statusText = t("requests.completed");
                 break;
             default:
                 statusClass = 'bg-gray-500 text-white';
+                statusText = status.replace('_', ' ');
         }
 
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-24 text-center capitalize`}>
-                {status.replace('_', ' ')}
+                {statusText}
             </span>
         );
     };
@@ -182,9 +191,7 @@ export default function Requests() {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredRequests.length)} of{' '}
-                    {filteredRequests.length} entries
+                    {t("requests.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredRequests.length), total: filteredRequests.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -195,7 +202,7 @@ export default function Requests() {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("requests.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
@@ -210,12 +217,12 @@ export default function Requests() {
     };
 
     if (isRequestsError) {
-        return <div className="p-4 text-red-500">Error loading requests data</div>;
+        return <div className="p-4 text-red-500">{t("requests.errorLoadingRequests")}</div>;
     }
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Requests Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t("requests.management")}</h1>
 
             {/* Requests Table */}
             <div className="shadow-2xl rounded-2xl overflow-hidden bg-white mt-6">
@@ -224,7 +231,7 @@ export default function Requests() {
                     <InputText
                         value={filters.customer}
                         onChange={(e) => handleFilterChange('customer', e.target.value)}
-                        placeholder="Search Customer..."
+                        placeholder={t("requests.searchCustomer")}
                         className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full"
                     />
                 </div>
@@ -237,7 +244,7 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="number"
-                                        placeholder="Phone"
+                                        placeholder={t("requests.phone")}
                                         value={filters.phone}
                                         onChange={(e) => handleFilterChange('phone', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -246,7 +253,7 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Service"
+                                        placeholder={t("requests.service")}
                                         value={filters.service}
                                         onChange={(e) => handleFilterChange('service', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -255,7 +262,7 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Provider"
+                                        placeholder={t("requests.provider")}
                                         value={filters.provider}
                                         onChange={(e) => handleFilterChange('provider', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -264,7 +271,7 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Status"
+                                        placeholder={t("requests.status")}
                                         value={filters.status}
                                         onChange={(e) => handleFilterChange('status', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -273,7 +280,7 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Address"
+                                        placeholder={t("requests.address")}
                                         value={filters.address}
                                         onChange={(e) => handleFilterChange('address', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -282,14 +289,14 @@ export default function Requests() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Date"
+                                        placeholder={t("requests.date")}
                                         value={filters.date}
                                         onChange={(e) => handleFilterChange('date', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
                                     />
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Feedback
+                                    {t("requests.feedback")}
                                 </th>
                             </tr>
                         </thead>
@@ -299,14 +306,14 @@ export default function Requests() {
                                     <td colSpan="7" className="px-3 py-4 text-center">
                                         <div className="flex justify-center items-center gap-2">
                                             <Loader2 className="animate-spin" size={18} />
-                                            Loading requests...
+                                            {t("requests.loadingRequests")}
                                         </div>
                                     </td>
                                 </tr>
                             ) : paginatedRequests.length === 0 ? (
                                 <tr>
                                     <td colSpan="7" className="px-3 py-4 text-center">
-                                        No requests found
+                                        {t("requests.noRequestsFound")}
                                     </td>
                                 </tr>
                             ) : (
@@ -327,7 +334,7 @@ export default function Requests() {
                                             </div>
                                             {request.services?.length > 1 && (
                                                 <div className="text-xs font-medium mt-1">
-                                                    Total: ${request.total_price ||
+                                                    {t("requests.total")}: ${request.total_price ||
                                                         request.services?.reduce((sum, s) => sum + parseFloat(s.price || 0), 0).toFixed(2)}
                                                 </div>
                                             )}
@@ -341,7 +348,7 @@ export default function Requests() {
                                                     </div>
                                                 </>
                                             ) : (
-                                                <span className="text-gray-400">Not assigned</span>
+                                                <span className="text-gray-400">{t("requests.notAssigned")}</span>
                                             )}
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
@@ -367,7 +374,7 @@ export default function Requests() {
                                                     </span>
                                                 </div>
                                             ) : (
-                                                <span className="text-gray-400">No feedback</span>
+                                                <span className="text-gray-400">{t("requests.noFeedback")}</span>
                                             )}
                                         </td>
                                     </tr>
@@ -397,7 +404,7 @@ export default function Requests() {
                             className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
                             disabled={isAnalysisFetching}
                         >
-                            {exportingData ? <Loader className='animate-spin text-white' /> : 'Export'}
+                            {exportingData ? <Loader className='animate-spin text-white' /> : t("requests.export")}
                         </button>
                     </div>
                 </div>
@@ -406,7 +413,7 @@ export default function Requests() {
                 <div className="flex flex-col lg:flex-row gap-4">
                     <MetricCard
                         className={`w-full lg:w-1/4`}
-                        title="Total Requests"
+                        title={t("requests.totalRequests")}
                         value={analysisData?.data?.data?.summary?.total_requests}
                         icon={<Users2Icon size={18} />}
                         bgColor="bg-blue-50"
@@ -415,7 +422,7 @@ export default function Requests() {
                     />
                     <MetricCard
                         className={`w-full lg:w-1/4`}
-                        title="Completion Rate"
+                        title={t("requests.completionRate")}
                         value={analysisData?.data?.data?.summary?.completion_rate}
                         icon={<ActivityIcon size={18} />}
                         bgColor="bg-green-50"
@@ -424,7 +431,7 @@ export default function Requests() {
                     />
                     <MetricCard
                         className={`w-full lg:w-1/4`}
-                        title="Total Revenue"
+                        title={t("requests.totalRevenue")}
                         value={`${analysisData?.data?.data?.summary?.total_revenue || 0} EGP`}
                         icon={<GiReceiveMoney size={18} />}
                         bgColor="bg-purple-50"
@@ -433,7 +440,7 @@ export default function Requests() {
                     />
                     <MetricCard
                         className={`w-full lg:w-1/4`}
-                        title="Cancellation Rate"
+                        title={t("requests.cancellationRate")}
                         value={analysisData?.data?.data?.summary?.cancellation_rate}
                         icon={<Users2Icon size={18} />}
                         bgColor="bg-orange-50"
@@ -447,7 +454,7 @@ export default function Requests() {
                     <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
                         <PieChart
                             key={analysisData}
-                            label="Request Status Distribution"
+                            label={t("requests.requestStatusDistribution")}
                             labels={analysisData?.data?.data?.charts?.status_distribution?.labels}
                             dataPoints={analysisData?.data?.data?.charts?.status_distribution?.values}
                         />
@@ -455,7 +462,7 @@ export default function Requests() {
                     <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
                         <LineChart
                             key={analysisData}
-                            label='Request Trends'
+                            label={t("requests.requestTrends")}
                             labels={analysisData?.data?.data?.charts?.request_trends?.labels}
                             dataPoints={analysisData?.data?.data?.charts?.request_trends?.values}
                         />
@@ -466,7 +473,7 @@ export default function Requests() {
                     <div className="bg-white p-4 rounded-lg shadow w-full ">
                         <LineChart
                             key={analysisData}
-                            label='Top categories requested'
+                            label={t("requests.topCategoriesRequested")}
                             labels={analysisData?.data?.data?.charts?.top_categories?.labels}
                             dataPoints={analysisData?.data?.data?.charts?.top_categories?.values}
                         />

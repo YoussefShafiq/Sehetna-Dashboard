@@ -2,8 +2,13 @@ import axios from 'axios';
 import React from 'react'
 import { useQuery } from 'react-query';
 import DocumentsDataTable from './DocumentsDataTable';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 export default function Documents() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
     function getDocumentsData() {
         return axios.get(
             `https://api.sehtnaa.com/api/admin/providers/required-documents`,
@@ -28,7 +33,7 @@ export default function Documents() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Required Documents Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t("documents.title")}</h1>
             <DocumentsDataTable
                 documents={DocumentsData?.data?.data || []}
                 loading={isDocumentsLoading}

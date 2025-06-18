@@ -8,7 +8,13 @@ import { addDays } from 'date-fns';
 import PieChart from './Charts/PieChart';
 import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+
 export default function Services() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [exportingData, setExportingData] = useState(false);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
@@ -52,7 +58,7 @@ export default function Services() {
         queryKey: ['ServicesData'],
         queryFn: getServicesData,
         onError: (error) => {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -76,7 +82,7 @@ export default function Services() {
             window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -105,7 +111,7 @@ export default function Services() {
         queryKey: ['ServicesAnalysisData', dateRange, servicesData],
         queryFn: getServicesAnalysisData,
         onError: (error) => {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("services.unexpectedError"), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -125,7 +131,7 @@ export default function Services() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Services Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t("services.management")}</h1>
             <ServicesDataTable
                 services={servicesData?.data?.data || []}
                 loading={isServicesLoading}
@@ -147,7 +153,7 @@ export default function Services() {
                             className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
                             disabled={isAnalysisFetching}
                         >
-                            {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+                            {exportingData ? <Loader2 className='animate-spin text-white' /> : t("services.export")}
                         </button>
 
                     </div>
@@ -157,7 +163,7 @@ export default function Services() {
                     <div className="flex flex-col lg:flex-row gap-4">
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Total Services"
+                            title={t("services.totalServices")}
                             value={analysisData?.data?.data?.summary?.total_services}
                             icon={<Users2Icon size={18} />}
                             bgColor="bg-blue-50"
@@ -166,7 +172,7 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Active Services"
+                            title={t("services.activeServices")}
                             value={analysisData?.data?.data?.summary?.active_services}
                             icon={<ActivityIcon size={18} />}
                             bgColor="bg-green-50"
@@ -175,7 +181,7 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Growth Rate"
+                            title={t("services.growthRate")}
                             value={`${analysisData?.data?.data?.summary?.growth_rate || 0}%`}
                             icon={<TrendingUpIcon size={18} />}
                             bgColor="bg-purple-50"
@@ -184,7 +190,7 @@ export default function Services() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="InActive Services"
+                            title={t("services.inactiveServices")}
                             value={analysisData?.data?.data?.summary?.inactive_services}
                             icon={<Users2Icon size={18} />}
                             bgColor="bg-orange-50"
@@ -198,7 +204,7 @@ export default function Services() {
                         <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
                             <PieChart
                                 key={analysisData}
-                                label="Provider Type Distribution"
+                                label={t("services.providerTypeDistribution")}
                                 labels={analysisData?.data?.data?.charts?.provider_type_distribution?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.provider_type_distribution?.values}
                             />
@@ -208,7 +214,7 @@ export default function Services() {
                         <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
                             <LineChart
                                 key={analysisData}
-                                label='Category Distribution'
+                                label={t("services.categoryDistribution")}
                                 labels={analysisData?.data?.data?.charts?.category_distribution?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.category_distribution?.values}
                             />
@@ -218,7 +224,7 @@ export default function Services() {
                         <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
-                                label='Top Services by Revenue'
+                                label={t("services.topServicesByRevenue")}
                                 labels={analysisData?.data?.data?.charts?.top_services_by_revenue?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.top_services_by_revenue?.values}
                             />
@@ -226,7 +232,7 @@ export default function Services() {
                         <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
-                                label='Top Services by Requests'
+                                label={t("services.topServicesByRequests")}
                                 labels={analysisData?.data?.data?.charts?.top_services_by_requests?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.top_services_by_requests?.values}
                             />

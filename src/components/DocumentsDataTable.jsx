@@ -8,8 +8,11 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function DocumentsDataTable({ documents, loading, refetch }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         name: '',
@@ -63,14 +66,13 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                 }
             );
             setUpdatingDocument(false);
-            toast.success("Document added successfully", { duration: 2000 });
+            toast.success(t("documents.documentAddedSuccessfully"), { duration: 2000 });
             setShowAddModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingDocument(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("common.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -92,14 +94,13 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                 }
             );
             setUpdatingDocument(false);
-            toast.success("Document updated successfully", { duration: 2000 });
+            toast.success(t("documents.documentUpdatedSuccessfully"), { duration: 2000 });
             setShowEditModal(false);
             resetForm();
             refetch();
         } catch (error) {
             setUpdatingDocument(false);
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("common.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -127,11 +128,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                     }
                 }
             );
-            toast.success("Document deleted successfully", { duration: 2000 });
+            toast.success(t("documents.documentDeletedSuccessfully"), { duration: 2000 });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("common.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -182,9 +182,12 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
         const typeClass = type === 'individual'
             ? 'bg-blue-100 text-blue-800'
             : 'bg-purple-100 text-purple-800';
+        const typeText = type === 'individual'
+            ? t("documents.individual")
+            : t("documents.organizational");
         return (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeClass} capitalize`}>
-                {type}
+                {typeText}
             </span>
         );
     };
@@ -195,9 +198,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredDocuments.length)} of{' '}
-                    {filteredDocuments.length} entries
+                    {t("documents.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredDocuments.length), total: filteredDocuments.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -208,7 +209,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("documents.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -229,12 +230,12 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search documents..."
+                    placeholder={t("documents.searchDocuments")}
                     className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
                 <Button
                     icon={<Plus size={18} />}
-                    label="Add Document"
+                    label={t("documents.addDocumentButton")}
                     onClick={() => setShowAddModal(true)}
                     className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                 />
@@ -248,7 +249,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Name"
+                                    placeholder={t("documents.name")}
                                     value={filters.name}
                                     onChange={(e) => handleFilterChange('name', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -257,14 +258,14 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Provider Type"
+                                    placeholder={t("documents.providerType")}
                                     value={filters.provider_type}
                                     onChange={(e) => handleFilterChange('provider_type', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
+                                {t("documents.actions")}
                             </th>
                         </tr>
                     </thead>
@@ -274,14 +275,14 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                 <td colSpan="3" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading documents...
+                                        {t("documents.loadingDocuments")}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedDocuments.length === 0 ? (
                             <tr>
                                 <td colSpan="3" className="px-3 py-4 text-center">
-                                    No documents found
+                                    {t("documents.noDocumentsFound")}
                                 </td>
                             </tr>
                         ) : (
@@ -295,7 +296,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="Edit document" closeDelay={0} delay={700}>
+                                            <Tooltip content={t("documents.editDocumentTooltip")} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
                                                     onClick={() => prepareEditForm(document)}
@@ -305,7 +306,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                             </Tooltip>
 
                                             <Tooltip
-                                                content={deletingDocId === document.id ? 'Deleting...' : 'Delete document'}
+                                                content={deletingDocId === document.id ? t("documents.deleting") : t("documents.deleteDocumentTooltip")}
                                                 closeDelay={0}
                                                 delay={700}
                                             >
@@ -350,10 +351,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Add New Document</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("documents.addNewDocument")}</h2>
                             <form onSubmit={handleAddDocument}>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Document Name</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("documents.documentName")}</label>
                                     <input
                                         type="text"
                                         name="name"
@@ -365,7 +366,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("documents.providerType")}</label>
                                     <select
                                         name="provider_type"
                                         value={formData.provider_type}
@@ -373,8 +374,8 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                         className="w-full px-3 py-2 border rounded-md"
                                         required
                                     >
-                                        <option value="individual">Individual</option>
-                                        <option value="organizational">Organizational</option>
+                                        <option value="individual">{t("documents.individual")}</option>
+                                        <option value="organizational">{t("documents.organizational")}</option>
                                     </select>
                                 </div>
 
@@ -387,14 +388,14 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("common.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingDocument}
                                     >
-                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Add Document'}
+                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : t("documents.addDocumentButton")}
 
                                     </button>
                                 </div>
@@ -421,10 +422,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Edit Document</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("documents.editDocumentTitle")}</h2>
                             <form onSubmit={handleEditDocument}>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Document Name</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("documents.documentName")}</label>
                                     <input
                                         type="text"
                                         name="name"
@@ -436,7 +437,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Provider Type</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("documents.providerType")}</label>
                                     <select
                                         name="provider_type"
                                         value={formData.provider_type}
@@ -444,8 +445,8 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                         className="w-full px-3 py-2 border rounded-md"
                                         required
                                     >
-                                        <option value="individual">Individual</option>
-                                        <option value="organizational">Organizational</option>
+                                        <option value="individual">{t("documents.individual")}</option>
+                                        <option value="organizational">{t("documents.organizational")}</option>
                                     </select>
                                 </div>
 
@@ -458,14 +459,14 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("common.cancel")}
                                     </button>
                                     <button
                                         type="submit"
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                         disabled={updatingDocument}
                                     >
-                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Update Document'}
+                                        {updatingDocument ? <Loader2 className="animate-spin mx-auto" size={18} /> : t("documents.updateDocument")}
 
                                     </button>
                                 </div>
@@ -497,10 +498,10 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                     <Trash2 className="h-5 w-5 text-red-600" />
                                 </div>
                                 <div className="ml-4">
-                                    <h3 className="text-lg font-medium text-gray-900">Delete Document</h3>
+                                    <h3 className="text-lg font-medium text-gray-900">{t("documents.deleteDocumentConfirm")}</h3>
                                     <div className="mt-2">
                                         <p className="text-sm text-gray-500">
-                                            Are you sure you want to delete this document? This action cannot be undone.
+                                            {t("documents.deleteDocumentMessage")}
                                         </p>
                                     </div>
                                 </div>
@@ -511,14 +512,14 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                                     onClick={() => setShowDeleteConfirm(false)}
                                     className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                 >
-                                    Cancel
+                                    {t("common.cancel")}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleConfirmDelete}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                                 >
-                                    Delete
+                                    {t("common.delete")}
                                 </button>
                             </div>
                         </div>

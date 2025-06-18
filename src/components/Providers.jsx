@@ -8,8 +8,13 @@ import { addDays } from 'date-fns';
 import PieChart from './Charts/PieChart';
 import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function Providers() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [exportingData, setExportingData] = useState(false);
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
@@ -54,7 +59,7 @@ export default function Providers() {
       window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t("providers.unexpectedError"), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -83,7 +88,7 @@ export default function Providers() {
     queryKey: ['ProvidersAnalysisData', dateRange, providersData],
     queryFn: getProvidersAnalysisData,
     onError: (error) => {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t("providers.unexpectedError"), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -100,7 +105,7 @@ export default function Providers() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Providers Management</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">{t("providers.management")}</h1>
       <ProvidersDataTable
         providers={providersData?.data?.data || { individual: [], organizational: [] }}
         loading={isProvidersLoading}
@@ -122,7 +127,7 @@ export default function Providers() {
               className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
               disabled={isAnalysisFetching}
             >
-              {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+              {exportingData ? <Loader2 className='animate-spin text-white' /> : t("providers.export")}
             </button>
           </div>
         </div>
@@ -132,7 +137,7 @@ export default function Providers() {
           <div className="flex flex-col lg:flex-row gap-4">
             <MetricCard
               className={`w-full lg:w-1/4`}
-              title="Total Providers"
+              title={t("providers.totalProviders")}
               value={analysisData?.data?.data?.summary?.total_providers}
               icon={<Users2Icon size={18} />}
               bgColor="bg-blue-50"
@@ -141,7 +146,7 @@ export default function Providers() {
             />
             <MetricCard
               className={`w-full lg:w-1/4`}
-              title="Active Providers"
+              title={t("providers.activeProviders")}
               value={analysisData?.data?.data?.summary?.active_providers}
               icon={<ActivityIcon size={18} />}
               bgColor="bg-green-50"
@@ -150,7 +155,7 @@ export default function Providers() {
             />
             <MetricCard
               className={`w-full lg:w-1/4`}
-              title="Growth Rate"
+              title={t("providers.growthRate")}
               value={`${analysisData?.data?.data?.summary?.growth_rate || 0}%`}
               icon={<TrendingUpIcon size={18} />}
               bgColor="bg-purple-50"
@@ -159,7 +164,7 @@ export default function Providers() {
             />
             <MetricCard
               className={`w-full lg:w-1/4`}
-              title="InActive Providers"
+              title={t("providers.inactiveProviders")}
               value={analysisData?.data?.data?.summary?.inactive_providers}
               icon={<Users2Icon size={18} />}
               bgColor="bg-orange-50"
@@ -173,7 +178,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
               <PieChart
                 key={analysisData}
-                label="Provider Type Distribution"
+                label={t("providers.providerTypeDistribution")}
                 labels={analysisData?.data?.data?.charts?.provider_type_distribution?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.provider_type_distribution?.values}
               />
@@ -183,7 +188,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
               <LineChart
                 key={analysisData}
-                label='Provider Creation Trends'
+                label={t("providers.providerCreationTrends")}
                 labels={analysisData?.data?.data?.charts?.creation_trends?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.creation_trends?.values}
               />
@@ -195,7 +200,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Accepted Request Analysis'
+                label={t("providers.acceptedRequestAnalysis")}
                 labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.accepted}
                 isStacked={true}
@@ -204,7 +209,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Rejected Request Analysis'
+                label={t("providers.rejectedRequestAnalysis")}
                 labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.rejected}
                 isStacked={true}
@@ -213,7 +218,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Pending Request Analysis'
+                label={t("providers.pendingRequestAnalysis")}
                 labels={analysisData?.data?.data?.charts?.request_response_analysis?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.request_response_analysis?.pending}
                 isStacked={true}
@@ -224,7 +229,7 @@ export default function Providers() {
             <div className="bg-white p-4 rounded-lg shadow w-full ">
               <LineChart
                 key={analysisData}
-                label='Top Performing Providers (completed requests)'
+                label={t("providers.topPerformingProviders")}
                 labels={analysisData?.data?.data?.charts?.top_performing_providers?.labels}
                 dataPoints={analysisData?.data?.data?.charts?.top_performing_providers?.completed_requests}
               />

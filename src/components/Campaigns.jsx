@@ -7,8 +7,10 @@ import { Loader2, Plus, ChevronRight, ChevronLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function Campaigns() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
@@ -80,7 +82,7 @@ export default function Campaigns() {
                     }
                 }
             );
-            toast.success(res.data.message, { duration: 2000 });
+            toast.success(res.data.message || t('campaigns.campaignCreatedSuccessfully'), { duration: 2000 });
             setShowAddModal(false);
             setFormData({
                 title: '',
@@ -89,7 +91,7 @@ export default function Campaigns() {
             });
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "Unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t('campaigns.unexpectedError'), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -122,9 +124,9 @@ export default function Campaigns() {
         const statusClass = status === 'success' ? 'bg-green-500 text-white' :
             status === 'failed' ? 'bg-red-500 text-white' :
                 'bg-yellow-500 text-white';
-        const statusText = status === 'success' ? 'Success' :
-            status === 'failed' ? 'Failed' :
-                'Queued';
+        const statusText = status === 'success' ? t('common.success') :
+            status === 'failed' ? t('campaigns.failed') :
+                t('campaigns.queued');
 
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
@@ -139,9 +141,11 @@ export default function Campaigns() {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredCampaigns.length)} of{' '}
-                    {filteredCampaigns.length} entries
+                    {t('campaigns.showingEntries', {
+                        start: (currentPage - 1) * rowsPerPage + 1,
+                        end: Math.min(currentPage * rowsPerPage, filteredCampaigns.length),
+                        total: filteredCampaigns.length
+                    })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -152,7 +156,7 @@ export default function Campaigns() {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t('campaigns.pageOf', { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -167,12 +171,12 @@ export default function Campaigns() {
     };
 
     if (isCampaignsError) {
-        return <div className="p-4 text-red-500">Error loading campaigns data</div>;
+        return <div className="p-4 text-red-500">{t('campaigns.errorLoadingCampaigns')}</div>;
     }
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Campaigns Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t('campaigns.management')}</h1>
 
             <div className="shadow-2xl rounded-2xl overflow-hidden bg-white">
                 {/* Global Search and Add Button */}
@@ -180,12 +184,12 @@ export default function Campaigns() {
                     <InputText
                         value={filters.global}
                         onChange={(e) => handleFilterChange('global', e.target.value)}
-                        placeholder="Search campaigns..."
+                        placeholder={t('campaigns.searchCampaigns')}
                         className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                     />
                     <Button
                         icon={<Plus size={18} />}
-                        label="Create Campaign"
+                        label={t('campaigns.createCampaign')}
                         onClick={() => setShowAddModal(true)}
                         className="bg-primary hover:bg-[#267192] transition-all  text-white px-3 py-2 rounded-xl shadow-sm min-w-max"
                     />
@@ -199,7 +203,7 @@ export default function Campaigns() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Title"
+                                        placeholder={t('campaigns.title')}
                                         value={filters.title}
                                         onChange={(e) => handleFilterChange('title', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -208,7 +212,7 @@ export default function Campaigns() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Message"
+                                        placeholder={t('campaigns.message')}
                                         value={filters.message}
                                         onChange={(e) => handleFilterChange('message', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
@@ -217,17 +221,17 @@ export default function Campaigns() {
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input
                                         type="text"
-                                        placeholder="Status"
+                                        placeholder={t('common.status')}
                                         value={filters.status}
                                         onChange={(e) => handleFilterChange('status', e.target.value)}
                                         className="text-xs p-1 border rounded w-full"
                                     />
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Stats
+                                    {t('campaigns.stats')}
                                 </th>
                                 <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Created At
+                                    {t('campaigns.createdAt')}
                                 </th>
                             </tr>
                         </thead>
@@ -237,14 +241,14 @@ export default function Campaigns() {
                                     <td colSpan="5" className="px-3 py-4 text-center">
                                         <div className="flex justify-center items-center gap-2">
                                             <Loader2 className="animate-spin" size={18} />
-                                            Loading campaigns...
+                                            {t('campaigns.loadingCampaigns')}
                                         </div>
                                     </td>
                                 </tr>
                             ) : paginatedCampaigns.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="px-3 py-4 text-center">
-                                        No campaigns found
+                                        {t('campaigns.noCampaignsFound')}
                                     </td>
                                 </tr>
                             ) : (
@@ -264,11 +268,11 @@ export default function Campaigns() {
                                         </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
                                             <div className="flex flex-col">
-                                                <span className="text-xs">Total: {campaign.total_notifications}</span>
-                                                <span className="text-xs text-green-500">Sent: {campaign.sent_count}</span>
-                                                <span className="text-xs text-red-500">Failed: {campaign.failed_count}</span>
+                                                <span className="text-xs">{t('campaigns.total')}: {campaign.total_notifications}</span>
+                                                <span className="text-xs text-green-500">{t('campaigns.sent')}: {campaign.sent_count}</span>
+                                                <span className="text-xs text-red-500">{t('campaigns.failed')}: {campaign.failed_count}</span>
                                                 {campaign.pending_count > 0 && (
-                                                    <span className="text-xs text-yellow-500">Pending: {campaign.pending_count}</span>
+                                                    <span className="text-xs text-yellow-500">{t('campaigns.pending')}: {campaign.pending_count}</span>
                                                 )}
                                             </div>
                                         </td>
@@ -302,10 +306,10 @@ export default function Campaigns() {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="p-6">
-                                <h2 className="text-xl font-bold mb-4">Create New Campaign</h2>
+                                <h2 className="text-xl font-bold mb-4">{t('campaigns.createNewCampaign')}</h2>
                                 <form onSubmit={handleCreateCampaign}>
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('campaigns.title')}</label>
                                         <input
                                             type="text"
                                             name="title"
@@ -317,7 +321,7 @@ export default function Campaigns() {
                                     </div>
 
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('campaigns.message')}</label>
                                         <textarea
                                             name="body"
                                             value={formData.body}
@@ -329,7 +333,7 @@ export default function Campaigns() {
                                     </div>
 
                                     <div className="mb-4">
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">User Type</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('campaigns.userType')}</label>
                                         <select
                                             name="user_type"
                                             value={formData.user_type}
@@ -337,9 +341,9 @@ export default function Campaigns() {
                                             className="w-full px-3 py-2 border rounded-md"
                                             required
                                         >
-                                            <option value="customer">Customer</option>
-                                            <option value="provider">Provider</option>
-                                            <option value="admin">Admin</option>
+                                            <option value="customer">{t('campaigns.customer')}</option>
+                                            <option value="provider">{t('campaigns.provider')}</option>
+                                            <option value="admin">{t('common.admin')}</option>
                                         </select>
                                     </div>
 
@@ -349,14 +353,14 @@ export default function Campaigns() {
                                             onClick={() => setShowAddModal(false)}
                                             className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                         >
-                                            Cancel
+                                            {t('common.cancel')}
                                         </button>
                                         <button
                                             type="submit"
                                             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                             disabled={isCreating}
                                         >
-                                            {isCreating ? <Loader2 className="animate-spin mx-auto" size={18} /> : 'Create Campaign'}
+                                            {isCreating ? <Loader2 className="animate-spin mx-auto" size={18} /> : t('campaigns.createCampaign')}
                                         </button>
                                     </div>
                                 </form>

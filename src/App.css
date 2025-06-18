@@ -1,0 +1,123 @@
+/* RTL Support */
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] .sidebar {
+    right: 0;
+    left: auto;
+}
+
+[dir="rtl"] .sidebar-close {
+    right: auto;
+    left: 1rem;
+}
+
+/* Arabic font support */
+[lang="ar"] {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* RTL specific adjustments */
+
+
+[dir="rtl"] .gap-2>*+* {
+    margin-right: 0.5rem;
+    margin-left: 0;
+}
+
+[dir="rtl"] .text-end {
+    text-align: left;
+}
+
+[dir="rtl"] .text-start {
+    text-align: right;
+}
+
+/* Form adjustments for RTL */
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+    text-align: right;
+}
+
+/* Button and icon adjustments for RTL */
+[dir="rtl"] .icon-left {
+    margin-right: 0;
+    margin-left: 0.5rem;
+}
+
+[dir="rtl"] .icon-right {
+    margin-left: 0;
+    margin-right: 0.5rem;
+}
+
+/* Navigation adjustments for RTL */
+[dir="rtl"] .nav-link {
+    padding-left: 0;
+    padding-right: 1rem;
+}
+
+/* Table adjustments for RTL */
+[dir="rtl"] th,
+[dir="rtl"] td {
+    text-align: right;
+}
+
+/* Modal and dropdown adjustments for RTL */
+[dir="rtl"] .modal-header .close {
+    margin-left: 0;
+    margin-right: auto;
+}
+
+[dir="rtl"] .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Toast notifications for RTL */
+[dir="rtl"] .toast {
+    text-align: right;
+}
+
+/* Chart and graph adjustments for RTL */
+[dir="rtl"] .chart-container {
+    direction: ltr;
+}
+
+/* Custom scrollbar for RTL */
+[dir="rtl"] ::-webkit-scrollbar {
+    direction: rtl;
+}
+
+/* Language toggle specific styles */
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.language-toggle button {
+    transition: all 0.2s ease;
+}
+
+.language-toggle button:hover {
+    transform: scale(1.05);
+}
+
+/* RTL specific language toggle */
+[dir="rtl"] .language-toggle {
+    flex-direction: row-reverse;
+}
+
+/* Responsive adjustments for RTL */
+@media (max-width: 768px) {
+    [dir="rtl"] .sidebar {
+        transform: translateX(100%);
+    }
+
+    [dir="rtl"] .sidebar.open {
+        transform: translateX(0);
+    }
+}

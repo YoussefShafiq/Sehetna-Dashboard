@@ -1,4 +1,5 @@
 import './App.css'
+import './i18n'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './components/Home';
@@ -11,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { Toaster } from 'react-hot-toast';
 import GoHome from './components/GoHome';
 import SidebarContextProvider from './contexts/SidebarContext';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Categories from './components/Categories';
 import Admins from './components/Admins';
@@ -47,10 +49,12 @@ function App() {
   return (
     <>
       <QueryClientProvider client={query}>
-        <SidebarContextProvider>
-          <RouterProvider router={routers} />
-          <Toaster position='bottom-right' />
-        </SidebarContextProvider>
+        <LanguageProvider>
+          <SidebarContextProvider>
+            <RouterProvider router={routers} />
+            <Toaster position='bottom-right' />
+          </SidebarContextProvider>
+        </LanguageProvider>
       </QueryClientProvider>
     </>
   )

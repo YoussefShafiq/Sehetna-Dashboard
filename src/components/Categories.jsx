@@ -1,9 +1,14 @@
 import axios from 'axios';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import CategoriesDataTable from './CategoriesDataTable';
 
 export default function Categories() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
     function getCategoriesData() {
         return axios.get(
             `https://api.sehtnaa.com/api/categories`,
@@ -28,7 +33,7 @@ export default function Categories() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Categories Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t('categories.management')}</h1>
             <CategoriesDataTable
                 categories={categoriesData?.data?.data || []}
                 loading={isCategoriesLoading}

@@ -1,6 +1,9 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 import ComplaintsDataTable from './ComplaintsDataTable';
 import DateRangePicker from './DateRangePicker';
 import { AlertCircleIcon, ClockIcon, Loader2, TrendingUpIcon, Users2Icon } from 'lucide-react';
@@ -10,6 +13,9 @@ import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
 
 export default function Complaints() {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+
     const [exportingData, setExportingData] = useState(false);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
@@ -54,7 +60,7 @@ export default function Complaints() {
             window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t('complaints.unexpectedError'), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -83,7 +89,7 @@ export default function Complaints() {
         queryKey: ['ComplaintsAnalysisData', dateRange, complaintsData],
         queryFn: getComplaintsAnalysisData,
         onError: (error) => {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t('complaints.unexpectedError'), { duration: 3000 });
             if (error.response?.status === 401) {
                 localStorage.removeItem('userToken');
                 navigate('/login');
@@ -100,7 +106,7 @@ export default function Complaints() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Complaints Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t('complaints.management')}</h1>
             <ComplaintsDataTable
                 complaints={complaintsData?.data?.data || []}
                 loading={isComplaintsLoading}
@@ -123,7 +129,7 @@ export default function Complaints() {
                             className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
                             disabled={isAnalysisFetching}
                         >
-                            {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+                            {exportingData ? <Loader2 className='animate-spin text-white' /> : t('complaints.export')}
                         </button>
                     </div>
                 </div>
@@ -133,7 +139,7 @@ export default function Complaints() {
                     <div className="flex flex-col lg:flex-row gap-4">
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Open Complaints"
+                            title={t('complaints.openComplaints')}
                             value={analysisData?.data?.data?.summary?.open_complaints}
                             icon={<Users2Icon size={18} />}
                             bgColor="bg-blue-50"
@@ -142,7 +148,7 @@ export default function Complaints() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Total Complaints"
+                            title={t('complaints.totalComplaints')}
                             value={analysisData?.data?.data?.summary?.total_complaints}
                             icon={<Users2Icon size={18} />}
                             bgColor="bg-lime-50"
@@ -151,7 +157,7 @@ export default function Complaints() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Resolved Complaints"
+                            title={t('complaints.resolvedComplaints')}
                             value={analysisData?.data?.data?.summary?.resolved_complaints}
                             icon={<AlertCircleIcon size={18} />}
                             bgColor="bg-green-50"
@@ -160,8 +166,8 @@ export default function Complaints() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="Average Resolution Time"
-                            value={`${analysisData?.data?.data?.summary?.avg_resolution_time_hours || 0} hours`}
+                            title={t('complaints.averageResolutionTime')}
+                            value={`${analysisData?.data?.data?.summary?.avg_resolution_time_hours || 0} ${t('complaints.hours')}`}
                             icon={<ClockIcon size={18} />}
                             bgColor="bg-purple-50"
                             textColor="text-purple-800"
@@ -169,7 +175,7 @@ export default function Complaints() {
                         />
                         <MetricCard
                             className={`w-full lg:w-1/4`}
-                            title="In Progress Complaints"
+                            title={t('complaints.inProgressComplaints')}
                             value={analysisData?.data?.data?.summary?.in_progress_complaints}
                             icon={<Users2Icon size={18} />}
                             bgColor="bg-orange-50"
@@ -183,7 +189,7 @@ export default function Complaints() {
                         <div className="bg-white p-4 rounded-lg shadow w-full lg:w-1/4 ">
                             <PieChart
                                 key={analysisData}
-                                label="Complaint Type Distribution"
+                                label={t('complaints.complaintTypeDistribution')}
                                 labels={analysisData?.data?.data?.charts?.status_distribution?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.status_distribution?.values}
                             />
@@ -193,7 +199,7 @@ export default function Complaints() {
                         <div className="bg-white p-4 rounded-lg shadow w-full lg:w-3/4 ">
                             <LineChart
                                 key={analysisData}
-                                label='Complaint Trends'
+                                label={t('complaints.complaintTrends')}
                                 labels={analysisData?.data?.data?.charts?.complaint_trends?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.complaint_trends?.values}
                             />
@@ -205,7 +211,7 @@ export default function Complaints() {
                         <div className="bg-white p-4 rounded-lg shadow w-full ">
                             <LineChart
                                 key={analysisData}
-                                label='Top Complaints'
+                                label={t('complaints.topComplaints')}
                                 labels={analysisData?.data?.data?.charts?.top_complainers?.labels}
                                 dataPoints={analysisData?.data?.data?.charts?.top_complainers?.values}
                             />

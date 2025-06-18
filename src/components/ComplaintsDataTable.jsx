@@ -7,8 +7,10 @@ import { Check, Loader2, X, Edit, ChevronRight, ChevronLeft } from 'lucide-react
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function ComplaintsDataTable({ complaints, loading, refetch }) {
+    const { t } = useTranslation();
     const [filters, setFilters] = useState({
         global: '',
         subject: '',
@@ -65,12 +67,12 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                 }
             );
 
-            toast.success("Complaint updated successfully", { duration: 2000 });
+            toast.success(t("complaints.complaintUpdatedSuccessfully"), { duration: 2000 });
             setShowUpdateModal(false);
             setShowDetailsModal(false);
             refetch();
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+            toast.error(error.response?.data?.message || t("complaints.unexpectedError"), { duration: 3000 });
             const navigate = useNavigate();
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
@@ -88,9 +90,15 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                 ? 'bg-yellow-100 text-yellow-800'
                 : 'bg-green-100 text-green-800';
 
+        const statusText = status === 'open'
+            ? t("common.open")
+            : status === 'in_progress'
+                ? t("complaints.inProgress")
+                : t("complaints.resolved");
+
         return (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass} capitalize`}>
-                {status.replace('_', ' ')}
+                {statusText}
             </span>
         );
     };
@@ -99,9 +107,12 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
         const typeClass = type === 'individual'
             ? 'bg-blue-100 text-blue-800'
             : 'bg-purple-100 text-purple-800';
+        const typeText = type === 'individual'
+            ? t("complaints.individual")
+            : t("complaints.company");
         return (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeClass} capitalize`}>
-                {type}
+                {typeText}
             </span>
         );
     };
@@ -147,9 +158,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredComplaints.length)} of{' '}
-                    {filteredComplaints.length} entries
+                    {t("complaints.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredComplaints.length), total: filteredComplaints.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -160,7 +169,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("complaints.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -181,7 +190,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search complaints..."
+                    placeholder={t("complaints.searchComplaints")}
                     className="px-3 py-2 rounded-xl shadow-sm focus:outline-2 focus:outline-primary w-full border border-primary transition-all"
                 />
             </div>
@@ -194,7 +203,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Subject"
+                                    placeholder={t("complaints.subject")}
                                     value={filters.subject}
                                     onChange={(e) => handleFilterChange('subject', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -203,7 +212,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Service"
+                                    placeholder={t("complaints.service")}
                                     value={filters.service}
                                     onChange={(e) => handleFilterChange('service', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -212,7 +221,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Provider"
+                                    placeholder={t("complaints.provider")}
                                     value={filters.provider}
                                     onChange={(e) => handleFilterChange('provider', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -221,7 +230,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Customer"
+                                    placeholder={t("complaints.customer")}
                                     value={filters.customer}
                                     onChange={(e) => handleFilterChange('customer', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
@@ -230,14 +239,14 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Status"
+                                    placeholder={t("complaints.status")}
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                     className="text-xs p-1 border rounded w-full"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
+                                {t("complaints.actions")}
                             </th>
                         </tr>
                     </thead>
@@ -247,14 +256,14 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                 <td colSpan="6" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading complaints...
+                                        {t("complaints.loadingComplaints")}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedComplaints.length === 0 ? (
                             <tr>
                                 <td colSpan="6" className="px-3 py-4 text-center">
-                                    No complaints found
+                                    {t("complaints.noComplaintsFound")}
                                 </td>
                             </tr>
                         ) : (
@@ -283,7 +292,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
-                                            <Tooltip content="View details" closeDelay={0} delay={700}>
+                                            <Tooltip content={t("complaints.viewDetailsTooltip")} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-blue-500 ring-0"
                                                     onClick={() => handleShowDetails(complaint)}
@@ -292,7 +301,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                                 </Button>
                                             </Tooltip>
 
-                                            <Tooltip content="Update status" closeDelay={0} delay={700}>
+                                            <Tooltip content={t("complaints.updateStatusTooltip")} closeDelay={0} delay={700}>
                                                 <Button
                                                     className="text-green-500 ring-0"
                                                     onClick={() => {
@@ -337,7 +346,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                     >
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-4">
-                                <h2 className="text-xl font-bold">Complaint Details</h2>
+                                <h2 className="text-xl font-bold">{t("complaints.complaintDetails")}</h2>
                                 <button onClick={() => setShowDetailsModal(false)} className="text-gray-500 hover:text-gray-700">
                                     <X size={24} />
                                 </button>
@@ -345,36 +354,36 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
 
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-medium text-gray-700">Subject</h3>
+                                    <h3 className="font-medium text-gray-700">{t("complaints.subject")}</h3>
                                     <p>{selectedComplaint.subject}</p>
                                 </div>
 
                                 <div>
-                                    <h3 className="font-medium text-gray-700">Description</h3>
+                                    <h3 className="font-medium text-gray-700">{t("common.description")}</h3>
                                     <p className="whitespace-pre-line">{selectedComplaint.description}</p>
                                 </div>
 
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h3 className="font-medium text-gray-700">Status</h3>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.status")}</h3>
                                         <div>{statusBadge(selectedComplaint.status)}</div>
                                     </div>
 
                                     <div>
-                                        <h3 className="font-medium text-gray-700">Response</h3>
-                                        <p className="whitespace-pre-line">{selectedComplaint.response || 'No response yet'}</p>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.response")}</h3>
+                                        <p className="whitespace-pre-line">{selectedComplaint.response || t("complaints.noResponseYet")}</p>
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h3 className="font-medium text-gray-700">Service</h3>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.service")}</h3>
                                         <p>{selectedComplaint.request?.service?.name?.en || 'N/A'}</p>
                                     </div>
 
                                     <div>
-                                        <h3 className="font-medium text-gray-700">Provider</h3>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.provider")}</h3>
                                         {selectedComplaint.request?.assigned_provider ? (
                                             <div>
                                                 <p>{selectedComplaint.request.assigned_provider.user.first_name} {selectedComplaint.request.assigned_provider.user.last_name}</p>
@@ -386,13 +395,13 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <h3 className="font-medium text-gray-700">Customer</h3>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.customer")}</h3>
                                         <p>{selectedComplaint.user.first_name} {selectedComplaint.user.last_name}</p>
                                     </div>
 
 
                                     <div>
-                                        <h3 className="font-medium text-gray-700">complained at:</h3>
+                                        <h3 className="font-medium text-gray-700">{t("complaints.complainedAt")}</h3>
                                         <p className="whitespace-pre-line">{selectedComplaint.created_at.substring(0, 10)}</p>
                                     </div>
                                 </div>
@@ -408,7 +417,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                         }}
                                         className="px-4 py-2 bg-primary text-white rounded-md hover:bg-[#267192] transition-all "
                                     >
-                                        Update Status
+                                        {t("complaints.updateStatusTooltip")}
                                     </button>
                                 </div>
                             </div>
@@ -434,10 +443,10 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="p-6">
-                            <h2 className="text-xl font-bold mb-4">Update Complaint Status</h2>
+                            <h2 className="text-xl font-bold mb-4">{t("complaints.updateComplaintStatus")}</h2>
                             <form onSubmit={handleUpdateComplaint}>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("complaints.status")}</label>
                                     <select
                                         name="status"
                                         value={updateForm.status}
@@ -445,14 +454,14 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                         className="w-full px-3 py-2 border rounded-md"
                                         required
                                     >
-                                        <option value="open">Open</option>
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="resolved">Resolved</option>
+                                        <option value="open">{t("common.open")}</option>
+                                        <option value="in_progress">{t("complaints.inProgress")}</option>
+                                        <option value="resolved">{t("complaints.resolved")}</option>
                                     </select>
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Response</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("complaints.response")}</label>
                                     <textarea
                                         name="response"
                                         value={updateForm.response}
@@ -469,7 +478,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                         onClick={() => setShowUpdateModal(false)}
                                         className="px-4 py-2 border rounded-md text-gray-700 hover:bg-gray-50"
                                     >
-                                        Cancel
+                                        {t("common.cancel")}
                                     </button>
                                     <button
                                         type="submit"
@@ -479,7 +488,7 @@ export default function ComplaintsDataTable({ complaints, loading, refetch }) {
                                         {updatingComplaintId === selectedComplaint.id ? (
                                             <Loader2 className="animate-spin mx-auto" size={18} />
                                         ) : (
-                                            'Update'
+                                            t("complaints.update")
                                         )}
                                     </button>
                                 </div>

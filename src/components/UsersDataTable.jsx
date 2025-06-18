@@ -3,10 +3,13 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import toast from 'react-hot-toast';
 import { Tooltip } from '@heroui/tooltip';
-import { Check, Loader, Loader2, X } from 'lucide-react';
+import { Check, Loader, Loader2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function UsersDataTable({ users, loading, onStatusToggle }) {
+    const { t } = useTranslation();
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         global: '',
         first_name: '',
@@ -32,10 +35,9 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
         setTogglingUserId(userId);
         try {
             await onStatusToggle(userId);
-            toast.success("User status updated", { duration: 2000 });
+            toast.success(t("users.userStatusUpdated"), { duration: 2000 });
         } catch (error) {
-            toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
-            const navigate = useNavigate();
+            toast.error(error.response?.data?.message || t("users.unexpectedError"), { duration: 3000 });
             if (error.response.status === 401) {
                 localStorage.removeItem('userToken')
                 navigate('/login')
@@ -75,7 +77,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
             : 'bg-[#930002] text-white';
         return (
             <span className={`flex justify-center w-fit items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusClass} min-w-16 text-center`}>
-                {status}
+                {status === 'active' ? t("users.active") : t("users.inactive")}
             </span>
         );
     };
@@ -86,9 +88,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    Showing {(currentPage - 1) * rowsPerPage + 1} to{' '}
-                    {Math.min(currentPage * rowsPerPage, filteredServices.length)} of{' '}
-                    {filteredUsers.length} entries
+                    {t("requests.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredUsers.length), total: filteredUsers.length })}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -106,7 +106,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                         <ChevronLeft />
                     </Button>
                     <span className="px-3 py-1">
-                        Page {currentPage} of {totalPages}
+                        {t("requests.pageOf", { current: currentPage, total: totalPages })}
                     </span>
                     <Button
                         icon="pi pi-angle-right"
@@ -134,7 +134,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                 <InputText
                     value={filters.global}
                     onChange={(e) => handleFilterChange('global', e.target.value)}
-                    placeholder="Search users..."
+                    placeholder={t("users.searchUsers")}
                     className="px-3 py-2 rounded-xl shadow-sm focus:ring-2 w-full"
                 />
             </div>
@@ -147,7 +147,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="First name"
+                                    placeholder={t("users.firstName")}
                                     value={filters.first_name}
                                     onChange={(e) => handleFilterChange('first_name', e.target.value)}
                                     className="text-xs p-1 border rounded"
@@ -156,7 +156,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Last name"
+                                    placeholder={t("users.lastName")}
                                     value={filters.last_name}
                                     onChange={(e) => handleFilterChange('last_name', e.target.value)}
                                     className="text-xs p-1 border rounded"
@@ -165,7 +165,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Email"
+                                    placeholder={t("users.email")}
                                     value={filters.email}
                                     onChange={(e) => handleFilterChange('email', e.target.value)}
                                     className="text-xs p-1 border rounded"
@@ -174,7 +174,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder={t("users.phone")}
                                     value={filters.phone}
                                     onChange={(e) => handleFilterChange('phone', e.target.value)}
                                     className="text-xs p-1 border rounded"
@@ -183,7 +183,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Gender"
+                                    placeholder={t("users.gender")}
                                     value={filters.gender}
                                     onChange={(e) => handleFilterChange('gender', e.target.value)}
                                     className="text-xs p-1 border rounded w-20"
@@ -192,14 +192,14 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <input
                                     type="text"
-                                    placeholder="Status"
+                                    placeholder={t("users.status")}
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
                                     className="text-xs p-1 border rounded w-32"
                                 />
                             </th>
                             <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Joined Date
+                                {t("users.joinedDate")}
                             </th>
                         </tr>
                     </thead>
@@ -209,14 +209,14 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                                 <td colSpan="7" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading users...
+                                        {t("users.loadingUsers")}
                                     </div>
                                 </td>
                             </tr>
                         ) : paginatedUsers.length === 0 ? (
                             <tr>
                                 <td colSpan="7" className="px-3 py-4 text-center">
-                                    No users found
+                                    {t("users.noUsersFound")}
                                 </td>
                             </tr>
                         ) : (
@@ -235,14 +235,14 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                                         {user.phone}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
-                                        {user.gender}
+                                        {user.gender === 'male' ? t("users.male") : t("users.female")}
                                     </td>
                                     <td className="px-3 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
                                             {statusBadge(user.status)}
                                             <Tooltip
-                                                content={togglingUserId === user.id ? 'Updating...' :
-                                                    `${user.status === 'active' ? 'Deactivate' : 'Activate'} user`}
+                                                content={togglingUserId === user.id ? t("users.updating") :
+                                                    `${user.status === 'active' ? t("users.deactivateUser") : t("users.activateUser")}`}
                                                 closeDelay={0}
                                                 delay={700}
                                             >

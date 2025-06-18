@@ -9,6 +9,8 @@ import { addDays } from 'date-fns';
 import PieChart from './Charts/PieChart';
 import MetricCard from './Charts/MetricCard';
 import LineChart from './Charts/LineChart';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 export default function Users() {
   const [dateRange, setDateRange] = useState({
@@ -16,6 +18,7 @@ export default function Users() {
     endDate: addDays(new Date(), 1)
   });
   const [exportingData, setExportingData] = useState(false);
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ export default function Users() {
     queryKey: ['usersData'],
     queryFn: getUsersData,
     onError: (error) => {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -58,7 +61,7 @@ export default function Users() {
       window.open('https://api.sehtnaa.com' + response.data.data.download_url, '_blank');
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -89,7 +92,7 @@ export default function Users() {
     queryKey: ['UserAanalysisData', dateRange, usersData],
     queryFn: getUsersAnalysisData,
     onError: (error) => {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -121,7 +124,7 @@ export default function Users() {
       );
       refetch();
     } catch (error) {
-      toast.error(error.response?.data?.message || "unexpected error", { duration: 3000 });
+      toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
       if (error.response?.status === 401) {
         localStorage.removeItem('userToken');
         navigate('/login');
@@ -130,19 +133,19 @@ export default function Users() {
   };
 
   if (isUsersError) {
-    return <div>Error loading users data</div>;
+    return <div>{t('common.error')} {t('common.loading')} {t('users.title')} {t('common.data')}</div>;
   }
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">Users Management</h1>
+      <h1 className="text-2xl font-bold mb-6 text-center">{t('users.title')} {t('common.management')}</h1>
       {/* <div className="flex flex-row items-center justify-center md:gap-5 p-5 bg-white mb-5 w-full md:w-fit m-auto rounded-2xl shadow-lg overflow-x-auto">
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full md:w-auto">
           <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-500">
             <Users2Icon size={20} />
           </div>
           <div className="flex flex-col items-center justify-center text-center">
-            <span className="text-sm capitalize">Total Users</span>
+            <span className="text-sm capitalize">{t('dashboard.totalUsers')}</span>
             <span className="text-lg font-bold">
               {usersData?.data?.data?.length || 0}
             </span>
@@ -154,7 +157,7 @@ export default function Users() {
             <Users2Icon size={20} />
           </div>
           <div className="flex flex-col items-center justify-center text-center">
-            <span className="text-sm capitalize">Active Users</span>
+            <span className="text-sm capitalize">{t('users.activeUsers')}</span>
             <span className="text-lg font-bold">
               {usersData?.data?.data?.filter(user => user.status === 'active').length || 0}
             </span>
@@ -166,7 +169,7 @@ export default function Users() {
             <Users2Icon size={20} />
           </div>
           <div className="flex flex-col items-center justify-center text-center">
-            <span className="text-sm capitalize">Inactive Users</span>
+            <span className="text-sm capitalize">{t('users.inactiveUsers')}</span>
             <span className="text-lg font-bold">
               {usersData?.data?.data?.filter(user => user.status === 'de-active').length || 0}
             </span>
@@ -197,7 +200,7 @@ export default function Users() {
               className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary_dark transition-colors"
               disabled={isAnalysisFetching}
             >
-              {exportingData ? <Loader2 className='animate-spin text-white' /> : 'Export'}
+              {exportingData ? <Loader2 className='animate-spin text-white' /> : t('common.export')}
             </button>
 
           </div>

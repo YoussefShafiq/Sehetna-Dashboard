@@ -3,8 +3,10 @@ import { DateRange } from 'react-date-range';
 import { format } from 'date-fns';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
+import { useTranslation } from 'react-i18next';
 
 const DateRangePicker = ({ onDateChange, initialRange }) => {
+    const { t } = useTranslation();
     const [state, setState] = useState([
         {
             startDate: initialRange?.startDate || new Date(),
@@ -63,7 +65,7 @@ const DateRangePicker = ({ onDateChange, initialRange }) => {
                             className="px-4 py-1 bg-blue-500 text-white rounded-md text-sm"
                             onClick={toggleDatePicker}
                         >
-                            Apply
+                            {t("dateRangePicker.apply")}
                         </button>
                     </div>
                 </div>

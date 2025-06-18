@@ -6,8 +6,11 @@ import HomeServicesCard from './HomeFeaturesCard'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 
 export default function Home() {
+
+  const { t } = useTranslation()
 
   function getHomeData() {
     return axios.get(
@@ -44,11 +47,11 @@ export default function Home() {
         {/* welcome card */}
         <div className="flex flex-col md:flex-row items-center gap-5 bg-gradient-to-r from-[#1c536a] to-[#3498c4] p-5 rounded-2xl text-white">
           <div className="md:w-3/5 flex flex-col gap-5">
-            <h1 className='font-light capitalize'>Dashbaord overview</h1>
-            <h2 className='font-bold text-4xl capitalize'>hello {localStorage.getItem('username')} 👋</h2>
+            <h1 className='font-light capitalize'>{t('dashboard.overview')}</h1>
+            <h2 className='font-bold text-4xl capitalize'>{t('dashboard.title')} {localStorage.getItem('username')} 👋</h2>
             <div className="flex gap-5 items-center my-10">
-              <button onClick={() => { navTo('/campaigns') }} className='bg-gradient-to-r from-[#1c536a] to-[#3498c4] font-semibold border-[1px] px-3 py-2 rounded-lg capitalize' >Add new campaign</button>
-              <button onClick={() => { navTo('/services') }} className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg capitalize'>Add new service</button>
+              <button onClick={() => { navTo('/campaigns') }} className='bg-gradient-to-r from-[#1c536a] to-[#3498c4] font-semibold border-[1px] px-3 py-2 rounded-lg capitalize' >{t('campaigns.addCampaign')}</button>
+              <button onClick={() => { navTo('/services') }} className='bg-white text-primary font-semibold border-[1px] px-3 py-2 rounded-lg capitalize'>{t('services.addService')}</button>
             </div>
           </div>
           <div className="w-5/6 m-auto md:w-2/5 flex justify-center items-center">

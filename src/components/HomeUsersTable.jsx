@@ -1,11 +1,10 @@
-import { Loader2 } from 'lucide-react';
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const HomeUsersTable = ({ users, loading }) => {
-    // Simulated data array
-
-
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const handleViewAllUsers = () => {
@@ -15,7 +14,7 @@ const HomeUsersTable = ({ users, loading }) => {
     return (
         <div className="p-4 bg-white rounded-2xl shadow-sm">
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-black">Users</h2>
+                <h2 className="text-xl font-semibold text-black">{t('common.users')}</h2>
             </div>
 
             <div className="overflow-x-auto min-h-[30vh]">
@@ -23,20 +22,20 @@ const HomeUsersTable = ({ users, loading }) => {
                     <thead className="bg-gray-50">
                         <tr>
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Patient Name
+                                {t('home.patientName')}
                             </th>
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Gender
+                                {t('home.gender')}
                             </th>
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Phone Number
+                                {t('home.phoneNumber')}
                             </th>
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Email
+                                {t('home.email')}
                             </th>
                             <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 <div className="flex items-center">
-                                    Status
+                                    {t('home.status')}
                                 </div>
                             </th>
                         </tr>
@@ -47,7 +46,7 @@ const HomeUsersTable = ({ users, loading }) => {
                                 <td colSpan="5" className="px-3 py-4 text-center">
                                     <div className="flex justify-center items-center gap-2">
                                         <Loader2 className="animate-spin" size={18} />
-                                        Loading users...
+                                        {t('home.loadingUsers')}
                                     </div>
                                 </td>
                             </tr>
@@ -70,7 +69,7 @@ const HomeUsersTable = ({ users, loading }) => {
                                     <td className="px-4 py-4 whitespace-nowrap">
                                         <div className={`px-2 flex justify-center text-xs leading-5 font-semibold rounded-md
                     ${user.status.toLowerCase() === 'active' ? 'bg-[#009379] ' : 'bg-[#930002] '} text-white`}>
-                                            {user.status}
+                                            {user.status.toLowerCase() === 'active' ? t('home.active') : t('home.inactive')}
                                         </div>
                                     </td>
                                 </tr>
@@ -81,7 +80,7 @@ const HomeUsersTable = ({ users, loading }) => {
                 </table>
             </div>
             <div className="pt-5 flex justify-center">
-                <button onClick={handleViewAllUsers} className='text-green-500'>view all</button>
+                <button onClick={handleViewAllUsers} className='text-green-500'>{t('common.viewAll')}</button>
             </div>
         </div>
     );

@@ -2,8 +2,10 @@ import axios from 'axios';
 import React from 'react';
 import { useQuery } from 'react-query';
 import AdminsDataTable from './AdminsDataTable';
+import { useTranslation } from 'react-i18next';
 
 export default function Admins() {
+    const { t } = useTranslation();
     function getAdminsData() {
         return axios.get(
             `https://api.sehtnaa.com/api/admin`,
@@ -28,7 +30,7 @@ export default function Admins() {
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-6 text-center">Admins Management</h1>
+            <h1 className="text-2xl font-bold mb-6 text-center">{t('admins.management')}</h1>
             <AdminsDataTable
                 admins={AdminsData?.data?.data || []}
                 loading={isAdminsLoading}
