@@ -88,7 +88,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    {t("requests.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredUsers.length), total: filteredUsers.length })}
+                    {t("requests.showingEntries").replace('{start}', (currentPage - 1) * rowsPerPage + 1).replace('{end}', Math.min(currentPage * rowsPerPage, filteredUsers.length)).replace('{total}', filteredUsers.length)}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -106,7 +106,7 @@ export default function UsersDataTable({ users, loading, onStatusToggle }) {
                         <ChevronLeft />
                     </Button>
                     <span className="px-3 py-1">
-                        {t("requests.pageOf", { current: currentPage, total: totalPages })}
+                        {t("requests.pageOf").replace('{current}', currentPage).replace('{total}', totalPages)}
                     </span>
                     <Button
                         icon="pi pi-angle-right"

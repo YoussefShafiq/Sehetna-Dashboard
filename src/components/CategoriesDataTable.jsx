@@ -299,11 +299,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    {t('categories.showingEntries', {
-                        start: (currentPage - 1) * rowsPerPage + 1,
-                        end: Math.min(currentPage * rowsPerPage, filteredCategories.length),
-                        total: filteredCategories.length
-                    })}
+                    {t('categories.showingEntries').replace('{start}', (currentPage - 1) * rowsPerPage + 1).replace('{end}', Math.min(currentPage * rowsPerPage, filteredCategories.length)).replace('{total}', filteredCategories.length)}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -314,7 +310,7 @@ export default function CategoriesDataTable({ categories, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        {t('categories.pageOf', { current: currentPage, total: totalPages })}
+                        {t('categories.pageOf').replace('{current}', currentPage).replace('{total}', totalPages)}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}

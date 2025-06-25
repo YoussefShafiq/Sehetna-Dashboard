@@ -205,7 +205,9 @@
         "requirementAddedSuccess": "Requirement added successfully",
         "requirementUpdatedSuccess": "Requirement updated successfully",
         "requirementDeletedSuccess": "Requirement deleted successfully",
-        "updateRequirement": "Update Requirement"
+        "updateRequirement": "Update Requirement",
+        "showingEntries": "Showing {start} to {end} of {total} entries",
+        "pageOf": "Page {current} of {total}"
     },
     "categories": {
         "title": "Categories",

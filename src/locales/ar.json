@@ -204,10 +204,12 @@
         "deleteRequirement": "حذف المتطلب",
         "addNewRequirement": "إضافة متطلب جديد",
         "typeLabel": "النوع",
-        "requirementAddedSuccess": "تمت إضافة المتطلب بنجاح",
+        "requirementAddedSuccess": "تم إضافة المتطلب بنجاح",
         "requirementUpdatedSuccess": "تم تحديث المتطلب بنجاح",
         "requirementDeletedSuccess": "تم حذف المتطلب بنجاح",
-        "updateRequirement": "تحديث المتطلب"
+        "updateRequirement": "تحديث المتطلب",
+        "showingEntries": "عرض {start} إلى {end} من {total} إدخال",
+        "pageOf": "صفحة {current} من {total}"
     },
     "categories": {
         "title": "الفئات",

@@ -198,7 +198,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    {t("documents.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredDocuments.length), total: filteredDocuments.length })}
+                    {t("documents.showingEntries").replace('{start}', (currentPage - 1) * rowsPerPage + 1).replace('{end}', Math.min(currentPage * rowsPerPage, filteredDocuments.length)).replace('{total}', filteredDocuments.length)}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -209,7 +209,7 @@ export default function DocumentsDataTable({ documents, loading, refetch }) {
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <span className="px-3 py-1">
-                        {t("documents.pageOf", { current: currentPage, total: totalPages })}
+                        {t("documents.pageOf").replace('{current}', currentPage).replace('{total}', totalPages)}
                     </span>
                     <Button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}

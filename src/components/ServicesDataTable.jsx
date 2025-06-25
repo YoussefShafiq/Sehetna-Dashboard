@@ -446,10 +446,13 @@ export default function ServicesDataTable({ services, loading, refetch, categori
     const renderPagination = () => {
         if (totalPages <= 1) return null;
 
+        const startEntry = (currentPage - 1) * rowsPerPage + 1;
+        const endEntry = Math.min(currentPage * rowsPerPage, filteredServices.length);
+
         return (
             <div className="flex justify-between items-center mt-4 px-4 pb-1">
                 <div className='text-xs'>
-                    {t("requests.showingEntries", { start: (currentPage - 1) * rowsPerPage + 1, end: Math.min(currentPage * rowsPerPage, filteredServices.length), total: filteredServices.length })}
+                    {t("services.showingEntries").replace('{start}', startEntry).replace('{end}', endEntry).replace('{total}', filteredServices.length)}
                 </div>
                 <div className="flex gap-1">
                     <Button
@@ -467,7 +470,7 @@ export default function ServicesDataTable({ services, loading, refetch, categori
                         <ChevronLeft />
                     </Button>
                     <span className="px-3 py-1">
-                        {t("requests.pageOf", { current: currentPage, total: totalPages })}
+                        {t("services.pageOf").replace('{current}', currentPage).replace('{total}', totalPages)}
                     </span>
                     <Button
                         icon="pi pi-angle-right"

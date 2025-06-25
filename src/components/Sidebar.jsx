@@ -28,7 +28,6 @@ export default function Sidebar() {
         } catch (error) {
             setloggingOut(false)
             toast.error(error.response?.data?.message || t('login.unexpectedError'), { duration: 3000 });
-            const navigate = useNavigate();
             localStorage.removeItem('userToken')
             navigate('/login')
         }
